@@ -39,4 +39,11 @@ class Node:
 		print
 
 
+class Edge:
+	def __init__(self, source_node = None, dest_node = None, attrs = None):
+		self.source_node = None
+		self.dest_node   = None
+		self.attrs 		 = attrs
+		
+
 
