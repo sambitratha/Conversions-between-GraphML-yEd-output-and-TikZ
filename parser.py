@@ -1,7 +1,5 @@
-# Add multi word unnamed attribute
-# alias
-# node contents as a replacement for name
 # yellow!80
+# variable get range 
 
 
 try:
@@ -38,7 +36,9 @@ calc_grammar = """
     range: INT_CONST COMMA DOT DOT DOT COMMA INT_CONST  -> rangetype1 
             | INT_CONST (COMMA INT_CONST)*              -> rangetype2
 
-    node_prop: pos? attrs? name?
+    node_prop: id? pos? attrs? name?
+
+    id: LPARAN STR_CONST RPARAN                        
 
     pos: AT LPARAN expr COMMA expr RPARAN
 
@@ -46,9 +46,10 @@ calc_grammar = """
 
     attrs: LBOX attr (COMMA attr)* RBOX
     
-    attr: STR_CONST                         -> unnamed_attr
-        | STR_CONST EQUALS STR_CONST        -> str_attr
-        | STR_CONST EQUALS expr             -> num_attr
+    attr: STR_CONST+                         -> unnamed_attr
+        | STR_CONST+ EQUALS STR_CONST+        -> str_attr
+        | STR_CONST+ EQUALS expr             -> num_attr
+        | STR_CONST+ EQUALS 
     
     name: LBRACE STR_CONST RBRACE
 
@@ -56,6 +57,7 @@ calc_grammar = """
             | expr SUB expr                 -> sub
             | mul_expr                      -> expr2
             | STR_CONST                     -> lookup
+
 
     mul_expr: mul_expr STAR mul_expr        -> mul
             | mul_expr DIVIDE mul_expr      -> div
@@ -157,29 +159,51 @@ def process_loop(t, foreach_list, loopnumber, variables):
         return nodes
 
 def run_node(t, dictionary = None, position = (0,0)):
+    global node_dictionary
+
     pos = position
     attrs = Attributes()
     name = ""
+    identity = ""
     for child in t.children:
-        if child.data == 'pos':
+        if child.data == "id":
+            identity = str(child.children[1])
+
+        elif child.data == 'pos':
             pos = (run_add_expr(child.children[2], dictionary), run_add_expr(child.children[4], dictionary))
+        
         elif child.data == 'name':
             name = str(child.children[1])
+
         elif child.data == 'attrs':
+
             for i in range(1, len(child.children)-1,2):
                 token = child.children[i]
                 if token.data == "unnamed_attr":
-                    val = str(token.children[0])
+                    val = str(' '.join(token.children))
                     attrs.addUnnamedAttribute(val)
+
                 else:
-                    key = str(token.children[0])
-                    val = token.children[2]
+
+                    key = str(' '.join(token.children[0:token.children.index('=')]))
+                    
                     if token.data == 'num_attr':
+                        val = token.children[token.children.index('=') + 1]
                         val = run_add_expr(val)
+                    
                     elif token.data == 'str_attr':
-                        val = str(val)
-                    attrs.addNamedAttribute(key, val)
-    return Node(pos, attrs, name)
+                        val = str(' '.join(token.children[token.children.index('=') + 1:]))
+                    
+                    if key == "node contents":
+                        name = val
+                    else:
+                        attrs.addNamedAttribute(key, val)
+    
+    new_node = Node(pos, attrs, name, identity)
+    if identity != "":
+        node_dictionary[identity] = new_node
+
+    return new_node
 
 
 def get_range(t):
@@ -258,6 +282,7 @@ def run_parser(program):
     instructions = []
     parse_tree = parser.parse(program)
     print (parse_tree.pretty(indent_str='  '))
+    #exit()
     for i in range(1,len(parse_tree.children)-1,2):
         instruction = parse_tree.children[i]
         instructions.extend( run_instruction(instruction))
@@ -274,6 +299,7 @@ def main():
 
 
 node_dictionary = {}
+
 instructions = main()
 for instruction in instructions:
     instruction.show()
