@@ -18,8 +18,8 @@ from lark import Lark
 calc_grammar = """
     start: LBRACE (instruction SEMICOLON)+ RBRACE
 
-    instruction: NODE for_each* node_prop             -> node_ins
-                |DRAW node_draw (edge_details? node_draw)*    -> draw_ins
+    instruction: BACKSLASH NODE for_each* node_prop             -> node_ins
+                |BACKSLASH DRAW node_draw (edge_details? node_draw)*    -> draw_ins
 
     node_draw:    position? NODE node_prop              -> typenode
                 | LPARAN STR_CONST RPARAN                 -> lookup
@@ -30,7 +30,7 @@ calc_grammar = """
 
     for_each: FOREACH variable IN LBRACE range RBRACE
 
-    variable: STR_CONST
+    variable: BACKSLASH STR_CONST
 
 
     range: INT_CONST COMMA DOT DOT DOT COMMA INT_CONST  -> rangetype1 
@@ -56,13 +56,13 @@ calc_grammar = """
     expr:   expr PLUS expr                  -> add
             | expr SUB expr                 -> sub
             | mul_expr                      -> expr2
-            | STR_CONST                     -> lookup
+            | variable                     -> lookup
 
 
     mul_expr: mul_expr STAR mul_expr        -> mul
             | mul_expr DIVIDE mul_expr      -> div
             | INT_CONST                     -> num
-            | STR_CONST                     -> lookup
+            | variable                     -> lookup
 
 
     INT_CONST: NUMBER
@@ -83,6 +83,7 @@ calc_grammar = """
     COMMA: ","
     SEMICOLON: ";"
     DOT: "."
+    BACKSLASH: "$"
    
     NODE: "node"
     DRAW: "draw"
@@ -110,7 +111,7 @@ def run_mult_expr(t, dictionary = None):
     elif t.data == 'num':
         return (float)(t.children[0])
     elif t.data == 'lookup':
-        key = str(t.children[0])
+        key = str(t.children[0].children[1])
         if key not in dictionary:
             raise SyntaxError('key not found: %s' % key)
         else:
@@ -126,7 +127,7 @@ def run_add_expr(t, dictionary = None):
     elif t.data == 'expr2':
         return run_mult_expr(t.children[0], dictionary)
     elif t.data == 'lookup':
-        key = str(t.children[0])
+        key = str(t.children[0].children[1])
         if key not in dictionary:
             raise SyntaxError('key not found: %s' % key)
         else:
@@ -222,7 +223,7 @@ def get_range(t):
 
 def run_forloop(t):
     #update this step 
-    variable = str(t.children[1].children[0])       
+    variable = str(t.children[1].children[1])       
     loop_range = get_range(t.children[4])
     return [variable] + loop_range
 
@@ -246,13 +247,16 @@ def process_node_draw(t):
 
 
 def run_instruction(t):
+
+
+
     if t.data == "node_ins":
 
         foreach_list = []
 
         for i in range(1, len(t.children) - 1):
             foreach_list.append(run_forloop(t.children[i]))
-        
+        print foreach_list
         return run_node_loop(t.children[-1], foreach_list)
 
     elif t.data == "draw_ins":
@@ -285,12 +289,14 @@ def run_parser(program):
     #exit()
     for i in range(1,len(parse_tree.children)-1,2):
         instruction = parse_tree.children[i]
+        instruction.children.pop(0)
         instructions.extend( run_instruction(instruction))
     return instructions
 
 def main():
     instructions = []
-    code = input('> ')
+    code = input('> ').replace('\\', '$')
+    print code
     try:
         instructions = run_parser(code)
     except Exception as e:
