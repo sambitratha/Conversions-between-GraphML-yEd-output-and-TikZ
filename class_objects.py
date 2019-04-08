@@ -27,14 +27,16 @@ class Attributes:
 		print self.unnamed_attributes
 
 class Node:
-	def __init__(self, position = (0,0), attributes = Attributes(), name=""):
+	def __init__(self, position = (0,0), attributes = Attributes(), name="", identity = ""):
 		self.position = position
 		self.attributes = attributes
 		self.name = name
+		self.id = identity
 
 	def show(self):
 		print "Name: ", self.name
 		print "Position: ", self.position
+		print "id: ", self.id
 		self.attributes.show()
 		print
 
