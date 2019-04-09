@@ -1,6 +1,6 @@
 # yellow!80
 # variable get range 
-
+#make changes here for which nodes the edge belongs to
 
 try:
     input = raw_input   # For Python2 compatibility
@@ -33,8 +33,11 @@ calc_grammar = """
     variable: BACKSLASH STR_CONST
 
 
-    range: INT_CONST COMMA DOT DOT DOT COMMA INT_CONST  -> rangetype1 
+    range: loopvar COMMA DOT DOT DOT COMMA loopvar  -> rangetype1 
             | INT_CONST (COMMA INT_CONST)*              -> rangetype2
+
+    loopvar: INT_CONST                              -> integer
+            | variable                              -> var
 
     node_prop: id? pos? attrs? name?
 
@@ -142,26 +145,50 @@ def run_node_loop(t, foreach_list):
     else:
         nodes = []
         for i in range(1, len(foreach_list[0])):
-            variables = [(foreach_list[0][0], foreach_list[0][i])]
-            nodes.extend(process_loop(t, foreach_list, 1, variables))
+            dictionary = {}
+            dictionary[foreach_list[0][0]] =  foreach_list[0][i]
+            nodes.extend(process_loop(t, foreach_list, 1, dictionary))
         return nodes
 
-def process_loop(t, foreach_list, loopnumber, variables):
+
+def process_loop(t, foreach_list, loopnumber, dictionary):
     if loopnumber == len(foreach_list):
-        dictionary = {}
-        for (x, y) in variables:
-            dictionary[x] = y
         return [run_node(t, dictionary)]
     else:
+        print "loopnumber = ", loopnumber, "dictionary = ", dictionary
         nodes = []
-        for i in range(1, len(foreach_list[loopnumber])):
-            variables.append((foreach_list[loopnumber][0], foreach_list[loopnumber][i]))
-            nodes.extend(process_loop(t, foreach_list, loopnumber + 1, variables))
+        looprange = []
+
+        if type(foreach_list[loopnumber][1]) != type("1") and type(foreach_list[loopnumber][-1]) != type("2"):
+            looprange = foreach_list[loopnumber]
+
+        else:
+            start = end = 0
+            if type(foreach_list[loopnumber][1]) == type("1"):
+                start = dictionary[foreach_list[loopnumber][1]]
+            else:
+                start = foreach_list[loopnumber][1]
+
+            if type(foreach_list[loopnumber][-1]) == type("1"):
+                end = dictionary[foreach_list[loopnumber][-1]]
+            else:
+                end = foreach_list[loopnumber][-1]
+
+            print start, end
+            looprange = range(start, end + 1)
+
+            print looprange
+
+        for i in range(len(looprange)):
+            dictionary[foreach_list[loopnumber][0]] = looprange[i]
+            nodes.extend(process_loop(t, foreach_list, loopnumber + 1, dictionary))
+        
         return nodes
 
 def run_node(t, dictionary = None, position = (0,0)):
     global node_dictionary
 
+    print dictionary
     pos = position
     attrs = Attributes()
     name = ""
@@ -209,10 +236,24 @@ def run_node(t, dictionary = None, position = (0,0)):
 
 def get_range(t):
     if t.data == "rangetype1":
-        start = int(t.children[0])
-        end   = int(t.children[-1])
-        print start, end
-        return range(start, end + 1)
+        li = []
+        first_node = t.children[0]
+        if first_node.data == "var":
+            li.append(str(first_node.children[0].children[1]))
+        else:
+            li.append(int(first_node.children[0]))
+
+        last_node = t.children[-1]
+        if last_node.data == "var":
+            li.append(str(last_node.children[0].children[1]))
+        else:
+            li.append(int(last_node.children[0]))
+
+        if type(li[0]) != type("a") and type(li[1]) != type("b"):
+            li = range(li[0], li[1] + 1)
+
+        return li
+
     elif t.data == "rangetype2":
         li = []
         for i in range(0, len(t.children), 2):
@@ -270,7 +311,7 @@ def run_instruction(t):
                 print "yes"
                 nodes.append(process_node_draw(t.children[i]))
 
-        #make changes here for which nodes the edge belongs to
+        
 
         for i in range(1, len(t.children)):
             if t.children[i].data == "edge_details":
