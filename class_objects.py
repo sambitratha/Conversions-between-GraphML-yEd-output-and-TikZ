@@ -32,6 +32,8 @@ class Node:
 		self.attributes = attributes
 		self.name = name
 		self.id = identity
+		self.shape = None
+		self.color = None
 
 	def show(self):
 		print "Name: ", self.name

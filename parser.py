@@ -41,7 +41,7 @@ calc_grammar = """
 
 
     range: numvar COMMA DOT DOT DOT COMMA numvar        -> rangetype1 
-            | INT_CONST (COMMA INT_CONST)*              -> discrete
+            | expr (COMMA expr)*              -> discrete
 
     numvar: expr                                        -> number
             | variable                                  -> var
@@ -103,10 +103,13 @@ calc_grammar = """
     AT: "at"
     IN: "in"
     FOREACH: "foreach"
+    %import common.ESCAPED_STRING   -> STRING
     %import common.CNAME -> NAME
     %import common.INT -> NUMBER
-    %import common.WS_INLINE
-    %ignore WS_INLINE
+    %import common.WS
+    %import common.NEWLINE
+    %ignore WS
+    %ignore NEWLINE
 """
 
 parser = Lark(calc_grammar)
@@ -173,8 +176,6 @@ def process_loop(t, foreach_list, loopnumber, dictionary):
 
 
 def generate_node(t, dictionary = None, position = (0,0)):
-    global node_dictionary
-
     pos = position
     attrs = Attributes()
     name = ""
@@ -249,7 +250,7 @@ def get_range(t):
             values.append(str(variable.children[1]))
 
         elif start_range.data == "number":
-            values.append(run_expr(start_range.children[0]))
+            values.append(process_add_expr(start_range.children[0]))
         else:
             raise SyntaxError('Unknown rannge type: %s' % start_range.data) 
 
@@ -262,7 +263,7 @@ def get_range(t):
             # variable = BACKSLASH var_name
             values.append(str(variable.children[1]))
         elif end_range.data == "number":
-            values.append(run_expr(end_range.children[0]))
+            values.append(process_add_expr(end_range.children[0]))
         else:
             raise SyntaxError('Unknown rannge type: %s' % end_range.data)
 
@@ -274,10 +275,9 @@ def get_range(t):
         # discrete_range = num (COMMA num)*
         for i in range(0, len(t.children), 2):
             values.append(process_add_expr(t.children[i]))
-
         return values
     else:
-        raise SyntaxError('Unknown rannge type: %s' % t.data)    
+        raise SyntaxError('Unknown range type: %s' % t.data)    
 
 
 def process_node_instruction(t):
@@ -298,7 +298,7 @@ def process_node_instruction(t):
         foreach_list.append([var_name] + loop_range)
 
     if foreach_list == []:
-        return [generate_node(t)]
+        return [generate_node(t.children[1])]
     else:
         return process_foreach(t.children[-1], foreach_list)
 
@@ -341,9 +341,7 @@ def process_instruction(t):
         edges = []
 
         for i in range(1, len(t.children)):
-            print t.children[i].data
             if t.children[i].data != "edge_details":
-                print "yes"
                 nodes.append(generate_node_draw(t.children[i]))
 
         
@@ -389,7 +387,6 @@ Action:
 def main():
     # Not able to parse '//' at the moment
     code = input('> ').replace('\\', '$')
-    # print code
     try:
         run_parser(code)
     except Exception as e:
@@ -402,3 +399,5 @@ graph_nodes = []
 
 if __name__ == '__main__':
     main()
+    for node in graph_nodes:
+        node.show()
