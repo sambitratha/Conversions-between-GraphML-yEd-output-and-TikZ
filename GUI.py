@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 import tkFont
 import random
-from tp import *
+from listings import *
 
 ############# global variables ################
 WINDOWWIDTH = 	600
