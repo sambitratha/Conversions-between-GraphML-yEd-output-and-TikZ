@@ -41,7 +41,7 @@ calc_grammar = """
 
 
     range: numvar COMMA DOT DOT DOT COMMA numvar        -> rangetype1 
-            | expr (COMMA expr)*              -> discrete
+            | expr (COMMA expr)*                        -> discrete
 
     numvar: expr                                        -> number
             | variable                                  -> var
@@ -155,7 +155,7 @@ def process_loop(t, foreach_list, loopnumber, dictionary):
         looprange = []
 
         start_range = foreach_list[loopnumber][1]
-        end_range = foreach_list[loopnumber][-1]
+        end_range = foreach_list[loopnumber][-2]
         
         if type(start_range) == "str":
             start_range = dictionary[start_range]
@@ -163,7 +163,7 @@ def process_loop(t, foreach_list, loopnumber, dictionary):
         if type(end_range) == "str":
             end_range = dictionary[end_range]
 
-        looprange = range(start_range, end_range + 1)
+        looprange = range((int)(start_range), (int)(end_range) + 1)
         # print start_range, end_range
         # print looprange
 
@@ -226,10 +226,15 @@ def process_foreach(t, foreach_list):
 
     first_loop = foreach_list[0]
     loop_var = first_loop[0]
+    if first_loop[-1] == 'range':
+        values = range((int)(first_loop[1]), (int)(first_loop[2])+1)
+    else:
+        values = first_loop[1:-1]
 
-    for i in range(1, len(first_loop)):
+
+    for i in values:
         dictionary = {}
-        dictionary[loop_var] =  first_loop[i]
+        dictionary[loop_var] =  i
         nodes.extend(process_loop(t, foreach_list, 1, dictionary))
     
     return nodes
@@ -295,8 +300,8 @@ def process_node_instruction(t):
 
         loop_range, range_type = get_range(foreach_ins.children[4])
         
-        foreach_list.append([var_name] + loop_range )
-        # foreach_list.append([var_name] + loop_range + [range_type])
+        # foreach_list.append([var_name] + loop_range )
+        foreach_list.append([var_name] + loop_range + [range_type])
 
     if foreach_list == []:
         return [generate_node(t.children[1])]

@@ -1,1 +1,1 @@
-{ node {A} [green] at (10,11); }
+{ \node (node1) at (9,0) [color=green, circle] {x};}

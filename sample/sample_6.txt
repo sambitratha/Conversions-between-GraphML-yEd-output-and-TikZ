@@ -1,0 +1,1 @@
+{ \node foreach \y in {1,...,6} foreach \x in {1,2,3} at (\x, \y) {a};}

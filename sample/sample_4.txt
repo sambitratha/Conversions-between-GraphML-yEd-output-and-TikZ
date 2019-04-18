@@ -1,0 +1,1 @@
+{ \node (node1) at (9,0) [color=red, circle] {BR};																					\node (node2) at (9,9) [color=blue, circle] {TR};																					\node (node3) at (0,9) [color=yellow, circle] {TL};																					\node (node4) at (0,0) [color=green, circle] {BL};}

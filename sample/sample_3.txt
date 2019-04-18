@@ -1,0 +1,1 @@
+{ \node foreach \i in {1,2,10} at (9-\i,10+\i) [color=green, circle, radius=\i]; \node foreach \i in {5,6} at (9-\i,10+\i) [color=green, circle, radius=\i];}
