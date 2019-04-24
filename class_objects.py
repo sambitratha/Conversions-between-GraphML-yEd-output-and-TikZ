@@ -26,6 +26,12 @@ class Attributes:
 		print "Unnamed Attributes"
 		print self.unnamed_attributes
 
+	def toJSON(self):
+		import json
+		print json.dumps(self)
+
+
+
 class Node:
 	def __init__(self, position = (0,0), attributes = Attributes(), name="", identity = ""):
 		self.position = position
@@ -42,12 +48,25 @@ class Node:
 		self.attributes.show()
 		print
 
+	def toJSON(self):
+		import json
+		return json.dumps(self, default=lambda o: o.__dict__)
+
 
 class Edge:
-	def __init__(self, source_node = None, dest_node = None, attrs = None):
-		self.source_node = None
-		self.dest_node   = None
+	def __init__(self, source, destination, edge_type, attrs = None):
+		self.source = source
+		self.destination   = destination
+		self.edge_type = abs(edge_type)
 		self.attrs 		 = attrs
-		
 
+	def show(self):
+		if self.edge_type:
+			print self.source, " -> ", self.destination
+		else:
+			print self.source, " -- ", self.destination
+	
+	def toJSON(self):
+		import json
+		return json.dumps(self, default=lambda o: o.__dict__)
 

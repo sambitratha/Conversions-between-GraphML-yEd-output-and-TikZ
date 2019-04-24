@@ -212,7 +212,8 @@ def generate_node(t, dictionary = None, position = (0,0)):
                         name = val
                     else:
                         attrs.addNamedAttribute(key, val)
-    
+    if identity == "":
+        identity = "node"+str(len(graph_nodes))
     new_node = Node(pos, attrs, name, identity)
     if identity != "":
         node_dictionary[identity] = new_node
@@ -308,26 +309,6 @@ def process_node_instruction(t):
     else:
         return process_foreach(t.children[-1], foreach_list)
 
-
-def process_node_draw(t):
-    if t.data == "typenode":
-        position = (0, 0)
-
-        try:
-            position = (process_add_expr(t.children[0].children[1]), process_add_expr(t.children[0].children[3]))
-        except Exception as e:
-            pass
-        
-        return process_node(t.children[-1], position = position)
-
-    elif t.data == "lookup":
-        return node_dictionary[str(t.children[1])]
-
-    else:
-        raise SyntaxError('Unknown instruction: %s' % t.data)
-
-
-
 """
 Input : The Subtree of one instruction
 Output: -
@@ -336,28 +317,54 @@ Action:
     2) Updates the list of nodes and edges.
 """
 def process_instruction(t):
-    global graph_nodes
+    global graph_nodes, graph_edges
 
     if t.data == "node_ins":
         graph_nodes.extend(process_node_instruction(t))
 
     elif t.data == "draw_ins":
-
-        nodes = []
-        edges = []
-
         for i in range(1, len(t.children)):
             if t.children[i].data != "edge_details":
-                nodes.append(generate_node_draw(t.children[i]))
+                node_draw = t.children[i]
+
+                identity = ""
+                if node_draw.data == "newnode":
+                    if node_draw.children[0].data == 'position':
+                        position = node_draw.children[0]
+                        x = process_add_expr(position.children[1])
+                        y = process_add_expr(position.children[3])
+
+                        graph_nodes.extend(process_node_instruction(node_draw.children[2], position = (x,y) ))
+                    else:
+                        graph_nodes.extend(process_node_instruction(node_draw.children[1]))
+                    identity = graph_nodes[-1].id
+                else:
+                    identity = node_draw.children[1]
+                t.children[i] = identity
 
         
-
         for i in range(1, len(t.children)):
-            if t.children[i].data == "edge_details":
-                edges.append(source_node = nodes[i-1], dest_node = nodes[i+1])
+            # print type(t.children[i])
+            # continue
+            if type(t.children[i])  == type(t):
 
-        return nodes, edges
-        
+                edge_details = t.children[i]
+                edge_type = 0
+                if len(edge_details.children)>1:
+                    edge_attr = edge_details.children[1]
+
+                    if edge_attr.children[1] == "LARROW":
+                        edge_type = -1
+                    elif edge_attr.children[1] == "RARROW":
+                        edge_type = 1
+                
+                source = t.children[i-1]
+                destination = t.children[i+1]
+
+                if edge_type ==-1:
+                    graph_edges.append(Edge(destination, source, edge_type))
+                else:
+                    graph_edges.append(Edge(source, destination, edge_type))  
     else:
         raise SyntaxError('Unknown instruction: %s' % t.data)
 
@@ -405,5 +412,10 @@ graph_nodes = []
 
 if __name__ == '__main__':
     main()
+    print "Nodes"
     for node in graph_nodes:
-        node.show()
+        # node.show()
+        print node.toJSON()
+    print "\n\nEdges"
+    for edge in graph_edges:
+        print edge.toJSON()
