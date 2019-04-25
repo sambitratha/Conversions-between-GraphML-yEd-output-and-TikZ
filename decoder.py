@@ -2,10 +2,11 @@ import yedgraphml
 import json
 
 
-def jsonToxml(jsonfilename= "sample2.json", graphfilename="test.graphml"):
+def run(jsonfilename= "sample2.json", graphfilename="test.graphml"):
 	with open(jsonfilename) as f:
 	    data = json.load(f)
-	edge_map = {0: 'standard', 1: 'none'}
+
+	edge_map = {1: 'standard', 0: 'none', -1: 'standard'}
 	nodes = data['Nodes']
 	edges = data['Edges']
 	g = yedgraphml.Graph()

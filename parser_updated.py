@@ -175,6 +175,7 @@ def process_loop(t, foreach_list, loopnumber, dictionary):
 
 
 def generate_node(t, dictionary = None, position = (0,0)):
+    global count
     pos = position
     attrs = Attributes()
     name = ""
@@ -213,7 +214,8 @@ def generate_node(t, dictionary = None, position = (0,0)):
                     else:
                         attrs.addNamedAttribute(key, val)
     if identity == "":
-        identity = "node"+str(len(graph_nodes))
+        identity = "default"+str(count)
+        count+=1
     new_node = Node(pos, attrs, name, identity)
     if identity != "":
         node_dictionary[identity] = new_node
@@ -399,7 +401,7 @@ Action:
 """
 def main():
     # Not able to parse '//' at the moment
-    code = input('> ').replace('\\', '$')
+    code = input().replace('\\', '$')
     try:
         run_parser(code)
     except Exception as e:
@@ -407,18 +409,29 @@ def main():
 
 
 def export():
-    return graph_nodes, graph_edges
+    output = { "Nodes": graph_nodes, "Edges": graph_edges}
+    return output
+
+def reset():
+    global graph_edges, graph_nodes, node_dictionary
+    node_dictionary = {}
+    graph_edges = []
+    graph_nodes = []
+
 
 node_dictionary = {}
 graph_edges = []
 graph_nodes = []
+count = 0
 
 if __name__ == '__main__':
     main()
-    print "Nodes"
-    for node in graph_nodes:
-        # node.show()
-        print node.toJSON()
-    print "\n\nEdges"
-    for edge in graph_edges:
-        print edge.toJSON()
+    output = { "Nodes": graph_nodes, "Edges": graph_edges}
+    import json
+    print json.dumps(output, default=lambda o: o.__dict__)
+    # for node in graph_nodes:
+    #     # node.show()
+    #     print node.toJSON()
+    # print "\n\nEdges"
+    # for edge in graph_edges:
+    #     print edge.toJSON()

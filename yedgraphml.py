@@ -30,7 +30,7 @@ shape_dict_xml_tex = {'ellipse': 'circle', 'diamond': 'diamond', 'trapezoid': 't
 class Node:
     def __init__(self, node_name, label=None, shape="rectangle", font_family="Dialog",
                  underlined_text="false", font_style="plain", font_size="12",
-                 shape_fill="#778899", transparent="false", edge_color="#000000",
+                 shape_fill="#000000", transparent="true", edge_color="#000000",
                  edge_type="line", edge_width="1.0", height=100, width=100, x=0,
                  y=0, node_type="ShapeNode"):
 

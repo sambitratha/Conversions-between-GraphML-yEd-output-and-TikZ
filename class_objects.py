@@ -38,8 +38,10 @@ class Node:
 		self.attributes = attributes
 		self.name = name
 		self.id = identity
-		self.shape = None
-		self.color = None
+		self.shape = "rectangle"
+		self.color = "white"
+		self.height = 100
+		self.width = 100
 
 	def show(self):
 		print "Name: ", self.name
@@ -59,6 +61,8 @@ class Edge:
 		self.destination   = destination
 		self.edge_type = abs(edge_type)
 		self.attrs 		 = attrs
+		self.width = 1
+		self.color = "black"
 
 	def show(self):
 		if self.edge_type:

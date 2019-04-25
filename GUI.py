@@ -6,6 +6,7 @@ import random
 from listings import *
 
 import parser_updated as parser
+import decoder
 
 ############# global variables ################
 WINDOWWIDTH = 	600
@@ -70,7 +71,7 @@ def add_menu_help(menu):
 
 
 def add_buttons(app):
-	global alert_box, inputfile_entry
+	global alert_box, inputfile_entry, outputfile_entry
 
 	select_inputfile_button = Button(app, text = "Select File", command = select_input_file, font = font)
 	select_inputfile_button.place(x = WINDOWWIDTH/4, y = WINDOWHEIGHT/3)
@@ -105,13 +106,25 @@ def convert():
 	global alert_message, alert_box, graph_nodes, graph_edges
 
 	try:
-		program = preprocess_inputfile(inputfile_entry.get())
+		input_filename = inputfile_entry.get()
+
+		program = preprocess_inputfile(input_filename)
+
 		parser.run_parser(program)
-		graph_nodes, graph_edges = parser.export()
-		for node in graph_nodes:
-			node.show()
+
+		intermediate_output = parser.export()
+
+		json_output_file = input_filename[:input_filename.find('.')]+".json"
+
+		import json
+		with open (json_output_file,'w') as f:
+			f.write (json.dumps(intermediate_output, default=lambda o: o.__dict__))
+
 		alert_message.set("Successfully Converted!!")
 		alert_box.config(fg = "green")
+
+		parser.reset()
+		decoder.run(json_output_file, outputfile_entry.get())
 
 	except Exception as e:
 		print(e)
@@ -124,21 +137,30 @@ def preprocess_inputfile(filename):
 		code = f.read()
 
 	code = code.replace('\\', '$')
-	# index = code.find("\\tikz{") + 6;
-	# program = "{"
+	code = code[code.find("$tikz") + 5 : ]
 
-	# depth = 1
-	# while depth != 0:
-	# 	if code[index] == '}':
-	# 		depth -= 1
-	# 	elif code[index] == '{':
-	# 		depth += 1
-	# 	elif code[index] == '\n' or code[index] == '\t':
-	# 		code[index] = ' '
+	index = code.find("{") + 1
 
-	# 	program += code[index]
+	program = "{"
 
-	program = code
+	depth = 1
+
+	while depth != 0:
+
+		if code[index] == '}':
+			depth -= 1
+
+		elif code[index] == '{':
+			depth += 1
+			
+		elif code[index] == '\n' or code[index] == '\t':
+			program += ' '
+			index += 1
+			continue
+
+		program += code[index]
+
+		index += 1
 
 	return program
 
@@ -147,6 +169,7 @@ font = None
 input_file_location = None
 inputfile_entry = None
 output_file_location = None
+outputfile_entry = None
 alert_message = None
 alert_box = None
 
