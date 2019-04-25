@@ -5,6 +5,8 @@ import tkFont
 import random
 from listings import *
 
+import parser_updated as parser
+
 ############# global variables ################
 WINDOWWIDTH = 	600
 WINDOWHEIGHT =	400
@@ -68,7 +70,7 @@ def add_menu_help(menu):
 
 
 def add_buttons(app):
-	global alert_box
+	global alert_box, inputfile_entry
 
 	select_inputfile_button = Button(app, text = "Select File", command = select_input_file, font = font)
 	select_inputfile_button.place(x = WINDOWWIDTH/4, y = WINDOWHEIGHT/3)
@@ -94,26 +96,61 @@ def add_buttons(app):
 def select_input_file():
 	filename = askopenfilename()
 	input_file_location.set(filename)
-	print filename
 
 def save_output_file():
 	filename = asksaveasfilename()
 	output_file_location.set(filename)
 
 def convert():
-	global alert_message, alert_box
-	successful = random.randint(0, 1)
-	if successful:
-		alert_message.set("Succefully Converted!!")
+	global alert_message, alert_box, graph_nodes, graph_edges
+
+	try:
+		program = preprocess_inputfile(inputfile_entry.get())
+		parser.run_parser(program)
+		graph_nodes, graph_edges = parser.export()
+		for node in graph_nodes:
+			node.show()
+		alert_message.set("Successfully Converted!!")
 		alert_box.config(fg = "green")
-	else:
+
+	except Exception as e:
+		print(e)
 		alert_message.set("Errors Occurred!!")
 		alert_box.config(fg = "red")
-	pass
+
+
+def preprocess_inputfile(filename):
+	with open(filename, 'r') as f:
+		code = f.read()
+
+	code = code.replace('\\', '$')
+	# index = code.find("\\tikz{") + 6;
+	# program = "{"
+
+	# depth = 1
+	# while depth != 0:
+	# 	if code[index] == '}':
+	# 		depth -= 1
+	# 	elif code[index] == '{':
+	# 		depth += 1
+	# 	elif code[index] == '\n' or code[index] == '\t':
+	# 		code[index] = ' '
+
+	# 	program += code[index]
+
+	program = code
+
+	return program
+
 
 font = None
 input_file_location = None
+inputfile_entry = None
 output_file_location = None
 alert_message = None
 alert_box = None
+
+graph_nodes = []
+graph_edges = []
+
 MainWindow()
