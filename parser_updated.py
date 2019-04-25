@@ -406,6 +406,9 @@ def main():
         print(e)
 
 
+def export():
+    return graph_nodes, graph_edges
+
 node_dictionary = {}
 graph_edges = []
 graph_nodes = []
