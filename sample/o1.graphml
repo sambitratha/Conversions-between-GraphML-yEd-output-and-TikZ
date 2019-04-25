@@ -4,13 +4,13 @@
 	<key for="node" id="data_node" yfiles.type="nodegraphics"/>
 	<key for="edge" id="data_edge" yfiles.type="edgegraphics"/>
 	<graph edgedefault="directed" id="G">
-		<node id="node1">
+		<node id="default0">
 			<data key="data_node">
 				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="9.0" y="0.0"/>
+					<y:Geometry height="100" width="100" x="6.06217782649" y="3.5"/>
 					<y:Fill color="white" transparent="true"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
-					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">x</y:NodeLabel>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">a</y:NodeLabel>
 					<y:Shape type="rectangle"/>
 				</y:ShapeNode>
 			</data>

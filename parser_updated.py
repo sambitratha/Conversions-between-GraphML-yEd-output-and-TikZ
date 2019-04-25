@@ -12,6 +12,7 @@ except NameError:
 from class_objects import *
 
 from lark import Lark
+import math
 
 
 #how to write grammar for node_draw (conflict issues)
@@ -22,7 +23,7 @@ calc_grammar = """
     instruction: BACKSLASH NODE for_each* node_prop                     -> node_ins
                 |BACKSLASH DRAW node_draw (edge_details? node_draw)*    -> draw_ins
 
-    node_draw:    position? NODE node_prop              -> typenode
+    node_draw:    position? NODE node_prop              -> newnode
                 | LPARAN STR_CONST RPARAN               -> lookup
 
 
@@ -50,9 +51,10 @@ calc_grammar = """
 
     id: LPARAN STR_CONST RPARAN                        
 
-    pos: AT LPARAN expr COMMA expr RPARAN
+    pos: AT position
 
-    position: LPARAN expr COMMA expr RPARAN
+    position: LPARAN expr COMMA expr RPARAN             -> cartesian
+            | LPARAN expr COLON expr RPARAN             -> polar
 
     attrs: LBOX attr (COMMA attr)* RBOX
     
@@ -96,6 +98,7 @@ calc_grammar = """
     LARROW: "<-"
     RARROW: "->"
     DASH: SUB
+    COLON: ":"
    
     NODE: "node"
     DRAW: "draw"
@@ -180,12 +183,23 @@ def generate_node(t, dictionary = None, position = (0,0)):
     attrs = Attributes()
     name = ""
     identity = ""
+
     for child in t.children:
         if child.data == "id":
             identity = str(child.children[1])
 
         elif child.data == 'pos':
-            pos = (process_add_expr(child.children[2], dictionary), process_add_expr(child.children[4], dictionary))
+            #pos = (process_add_expr(child.children[2], dictionary), process_add_expr(child.children[4], dictionary))
+            position = child.children[1]
+            expr1, expr2 = position.childre[1], position.children[3]
+
+            x, y = process_add_expr(expr1, dictionary), process_add_expr(expr2, dictionary)  
+
+            if position.data == "polar":
+                theta =  (x * math.pi) / 180.0
+                x, y = y * math.cos(theta), y * math.sin(theta)
+
+            pos = (x, y)
         
         elif child.data == 'name':
             name = str(child.children[1])
@@ -331,20 +345,24 @@ def process_instruction(t):
 
                 identity = ""
                 if node_draw.data == "newnode":
-                    if node_draw.children[0].data == 'position':
+                    if node_draw.children[0].data in ["polar", "cartesian"]:
                         position = node_draw.children[0]
                         x = process_add_expr(position.children[1])
                         y = process_add_expr(position.children[3])
 
-                        graph_nodes.extend(process_node_instruction(node_draw.children[2], position = (x,y) ))
+                        if position.data == "polar":
+                            theta =  (x * math.pi) / 180.0
+                            x, y = y * math.cos(theta), y * math.sin(theta)
+
+                        graph_nodes.append(generate_node(node_draw.children[2], position = (x,y) ))
+                       
                     else:
-                        graph_nodes.extend(process_node_instruction(node_draw.children[1]))
+                        graph_nodes.extend(generate_node(node_draw.children[1]))
                     identity = graph_nodes[-1].id
                 else:
                     identity = node_draw.children[1]
                 t.children[i] = identity
 
-        
         for i in range(1, len(t.children)):
             # print type(t.children[i])
             # continue
@@ -379,7 +397,7 @@ Action:
 """
 def run_parser(program):
     parse_tree = parser.parse(program)
-    # print (parse_tree.pretty(indent_str='  '))
+    #print (parse_tree.pretty(indent_str='  '))
     # exit()
 
     # code = LBRACE (instruction SEMICOLON)+ RBRACE

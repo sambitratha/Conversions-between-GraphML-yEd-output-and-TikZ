@@ -1,0 +1,4 @@
+\tikz
+{
+	\draw (30: 7) node [green] {a} ;
+}
