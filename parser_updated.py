@@ -26,6 +26,7 @@ calc_grammar = """
 
     node_draw:    position? NODE node_prop              -> newnode
                 | LPARAN STR_CONST RPARAN               -> lookup
+                | LPARAN variable RPARAN                -> variable
 
 
 
@@ -37,16 +38,20 @@ calc_grammar = """
             | RARROW
             | DASH
 
-    for_each: FOREACH variable IN LBRACE range RBRACE
+    for_each: FOREACH variables IN LBRACE range RBRACE
 
     variable: BACKSLASH STR_CONST
+    variables: variable (SLASH variable)*
 
 
     range: numvar COMMA DOT DOT DOT COMMA numvar        -> rangetype1 
-            | expr (COMMA expr)*                        -> discrete
+            | numvar (COMMA numvar)*                        -> discrete
 
     numvar: expr                                        -> number
-            | variable                                  -> var
+            | variables                                 -> var
+            | values                                    -> vals
+
+    values: STR_CONST (SLASH STR_CONST)*
 
     node_prop: id? pos? attrs? name?
 
@@ -100,6 +105,7 @@ calc_grammar = """
     RARROW: "->"
     DASH: SUB
     COLON: ":"
+    SLASH: "/"
    
     NODE: "node"
     DRAW: "draw"
@@ -159,7 +165,6 @@ def process_loop(t, foreach_list, loopnumber, dictionary, ins = False):
                 t.children.pop(0)
             process_instruction(t, dictionary)
     else:
-        print "loopnumber = ", loopnumber, "dictionary = ", dictionary
         nodes = []
         looprange = []
 
@@ -239,7 +244,9 @@ def generate_node(t, dictionary = None, position = (0,0)):
     if identity == "":
         identity = "default"+str(count)
         count += 1
+
     new_node = Node(pos, attrs, name, identity)
+
     if identity != "":
         node_dictionary[identity] = new_node
 
@@ -251,16 +258,24 @@ def process_foreach(t, foreach_list):
     print foreach_list
 
     first_loop = foreach_list[0]
-    loop_var = first_loop[0]
+    loop_vars = first_loop[0]
     if first_loop[-1] == 'range':
         values = range((int)(first_loop[1]), (int)(first_loop[2])+1)
     else:
         values = first_loop[1:-1]
 
 
-    for i in values:
+    for value in values:
         dictionary = {}
-        dictionary[loop_var] =  i
+
+        i = 0
+        for loop_var in loop_vars:
+            try:
+                dictionary[loop_var] = value[i]
+            except Exception as e:
+                dictionary[loop_var] = value
+            i += 1
+
         if t.data == "loop_ins":
             process_loop(t.children[-1], foreach_list, 1, dictionary, ins=True)
         else:
@@ -304,17 +319,25 @@ def get_range(t):
         return values, "range"
 
     elif t.data == "discrete":
+        #t = numvar (COMMA numvar)*
         values = []
 
         # discrete_range = num (COMMA num)*
         for i in range(0, len(t.children), 2):
-            values.append(process_add_expr(t.children[i]))
+            if t.children[i].data == "number":
+                values.append(process_add_expr(t.children[i].children[0]))
+            elif t.children[i].data == "vals":
+                values.append(getValues(t.children[i].children[0]))
+
         return values, "discrete"
     else:
         raise SyntaxError('Unknown range type: %s' % t.data)    
 
 
 def process_node_instruction(t, dictionary = None):
+
+    # NODE for_each* node_prop
+
     foreach_list = []
 
     # node_ins = NODE foreach* node_props
@@ -322,13 +345,12 @@ def process_node_instruction(t, dictionary = None):
         foreach_ins = t.children[i]
 
         # foreach_ins = FOREACH variable IN LBRACE range RBRACE
-        variable = foreach_ins.children[1]
+        variables = foreach_ins.children[1]
         
-        # variable = BACKSLASH var_name
-        var_name = str(variable.children[1])
+        # variables : variable (SLASH variable)*
+        var_name = getVariables(variables)[0]
 
         loop_range, range_type = get_range(foreach_ins.children[4])
-        
         # foreach_list.append([var_name] + loop_range )
         foreach_list.append([var_name] + loop_range + [range_type])
 
@@ -350,6 +372,8 @@ def process_instruction(t, dictionary = None):
         graph_nodes.extend(process_node_instruction(t, dictionary))
 
     elif t.data == "draw_ins":
+
+        node_ids = []
         for i in range(1, len(t.children)):
             if t.children[i].data != "edge_details":
                 node_draw = t.children[i]
@@ -370,14 +394,22 @@ def process_instruction(t, dictionary = None):
                     else:
                         graph_nodes.extend(generate_node(node_draw.children[1]))
                     identity = graph_nodes[-1].id
-                else:
+                
+                elif node_draw.data == "lookup":
                     identity = node_draw.children[1]
-                t.children[i] = identity
+
+                elif node_draw.data == "variable":
+                    identity = dictionary[node_draw.children[1].children[1]]
+
+                # t.children[i] = identity
+                node_ids.append(identity)
+            else:
+                node_ids.append(None)
 
         for i in range(1, len(t.children)):
             # print type(t.children[i])
             # continue
-            if type(t.children[i])  == type(t):
+            if t.children[i].data == "edge_details":
 
                 edge_details = t.children[i]
                 edge_type = 0
@@ -389,8 +421,8 @@ def process_instruction(t, dictionary = None):
                     elif edge_attr.children[1] == "RARROW":
                         edge_type = 1
                 
-                source = t.children[i-1]
-                destination = t.children[i+1]
+                source = node_ids[i-2]
+                destination = node_ids[i]
 
                 if edge_type ==-1:
                     graph_edges.append(Edge(destination, source, edge_type))
@@ -398,19 +430,17 @@ def process_instruction(t, dictionary = None):
                     graph_edges.append(Edge(source, destination, edge_type))  
 
     #t.children = (backslash foreach)*
-    #foreach = foreach variable in { range }
+    #foreach = foreach variables in { range }
     elif t.data == "loop_ins":
 
         foreach_list = []
-        print len(t.children)
         for i in range(0, len(t.children) - 1, 2):
             foreach_ins = t.children[i]
 
             variable = foreach_ins.children[1]
-            var_name = str(variable.children[1])
-            print var_name
+            var_names = getVariables(variable)
             loop_range, range_type = get_range(foreach_ins.children[4])
-            foreach_list.append([var_name] + loop_range + [range_type])
+            foreach_list.append([var_names] + loop_range + [range_type])
 
 
         process_foreach(t, foreach_list)
@@ -466,6 +496,20 @@ def reset():
     graph_edges = []
     graph_nodes = []
 
+
+def getVariables(t):
+    #t = variable (SLASH variable)*
+    variables = []
+    for i in range(0, len(t.children), 2):
+        variables.append(str(t.children[i].children[1]))
+    return variables
+
+
+def getValues(t):
+    values = []
+    for i in range(0, len(t.children), 2):
+        values.append(str(t.children[i]))
+    return values
 
 node_dictionary = {}
 graph_edges = []

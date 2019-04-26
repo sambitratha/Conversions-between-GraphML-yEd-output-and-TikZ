@@ -1,7 +1,9 @@
 \tikz
 {
-	\node foreach \x in {1,2} at (\x, 0) {a};
+	\node (a) at (1,0) {a};
+	\node (b) at (0,0) {b};
+	\node (c) at (0,1) {c};
+	\node (d) at (1,1) {d};
 
-	\foreach \y in {1,2} \node at (\y, \y) {b};
-
+	\foreach \angle in {0, 90, 180, 270} \node at (\angle: 1);
 }
