@@ -1,1 +1,1 @@
-\tikz { \node (node1) at (9,0) [color=green, circle] {x};}
+\tikz { \foreach \x in {1,2,3} \node at (\x, \x) {a};}

@@ -1,0 +1,7 @@
+\tikz
+{
+	\node foreach \x in {1,2} at (\x, 0) {a};
+
+	\foreach \y in {1,2} \node at (\y, \y) {b};
+
+}

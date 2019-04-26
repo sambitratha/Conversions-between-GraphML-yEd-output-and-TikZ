@@ -22,6 +22,7 @@ calc_grammar = """
 
     instruction: BACKSLASH NODE for_each* node_prop                     -> node_ins
                 |BACKSLASH DRAW node_draw (edge_details? node_draw)*    -> draw_ins
+                |(BACKSLASH for_each)* instruction                         -> loop_ins
 
     node_draw:    position? NODE node_prop              -> newnode
                 | LPARAN STR_CONST RPARAN               -> lookup
@@ -149,9 +150,14 @@ def process_add_expr(t, dictionary = None):
         raise SyntaxError('Unknown expression: %s' % t.data)
 
 
-def process_loop(t, foreach_list, loopnumber, dictionary):
+def process_loop(t, foreach_list, loopnumber, dictionary, ins = False):
     if loopnumber == len(foreach_list):
-        return [generate_node(t, dictionary)]
+        if not ins:
+            return [generate_node(t, dictionary)]
+        else:
+            if t.children[0] == "$":
+                t.children.pop(0)
+            process_instruction(t, dictionary)
     else:
         print "loopnumber = ", loopnumber, "dictionary = ", dictionary
         nodes = []
@@ -172,8 +178,11 @@ def process_loop(t, foreach_list, loopnumber, dictionary):
 
         for i in range(len(looprange)):
             dictionary[foreach_list[loopnumber][0]] = looprange[i]
-            nodes.extend(process_loop(t, foreach_list, loopnumber + 1, dictionary))
-        
+            if not ins:
+                nodes.extend(process_loop(t, foreach_list, loopnumber + 1, dictionary))
+            else:
+                process_loop(t, foreach_list, loopnumber + 1, dictionary)
+
         return nodes
 
 
@@ -191,7 +200,7 @@ def generate_node(t, dictionary = None, position = (0,0)):
         elif child.data == 'pos':
             #pos = (process_add_expr(child.children[2], dictionary), process_add_expr(child.children[4], dictionary))
             position = child.children[1]
-            expr1, expr2 = position.childre[1], position.children[3]
+            expr1, expr2 = position.children[1], position.children[3]
 
             x, y = process_add_expr(expr1, dictionary), process_add_expr(expr2, dictionary)  
 
@@ -229,7 +238,7 @@ def generate_node(t, dictionary = None, position = (0,0)):
                         attrs.addNamedAttribute(key, val)
     if identity == "":
         identity = "default"+str(count)
-        count+=1
+        count += 1
     new_node = Node(pos, attrs, name, identity)
     if identity != "":
         node_dictionary[identity] = new_node
@@ -252,7 +261,10 @@ def process_foreach(t, foreach_list):
     for i in values:
         dictionary = {}
         dictionary[loop_var] =  i
-        nodes.extend(process_loop(t, foreach_list, 1, dictionary))
+        if t.data == "loop_ins":
+            process_loop(t.children[-1], foreach_list, 1, dictionary, ins=True)
+        else:
+            nodes.extend(process_loop(t, foreach_list, 1, dictionary))
     
     return nodes
 
@@ -302,7 +314,7 @@ def get_range(t):
         raise SyntaxError('Unknown range type: %s' % t.data)    
 
 
-def process_node_instruction(t):
+def process_node_instruction(t, dictionary = None):
     foreach_list = []
 
     # node_ins = NODE foreach* node_props
@@ -321,7 +333,7 @@ def process_node_instruction(t):
         foreach_list.append([var_name] + loop_range + [range_type])
 
     if foreach_list == []:
-        return [generate_node(t.children[1])]
+        return [generate_node(t.children[1], dictionary)]
     else:
         return process_foreach(t.children[-1], foreach_list)
 
@@ -332,11 +344,10 @@ Action:
     1) Parses which type of instruction it is. 
     2) Updates the list of nodes and edges.
 """
-def process_instruction(t):
+def process_instruction(t, dictionary = None):
     global graph_nodes, graph_edges
-
     if t.data == "node_ins":
-        graph_nodes.extend(process_node_instruction(t))
+        graph_nodes.extend(process_node_instruction(t, dictionary))
 
     elif t.data == "draw_ins":
         for i in range(1, len(t.children)):
@@ -385,6 +396,25 @@ def process_instruction(t):
                     graph_edges.append(Edge(destination, source, edge_type))
                 else:
                     graph_edges.append(Edge(source, destination, edge_type))  
+
+    #t.children = (backslash foreach)*
+    #foreach = foreach variable in { range }
+    elif t.data == "loop_ins":
+
+        foreach_list = []
+        print len(t.children)
+        for i in range(0, len(t.children) - 1, 2):
+            foreach_ins = t.children[i]
+
+            variable = foreach_ins.children[1]
+            var_name = str(variable.children[1])
+            print var_name
+            loop_range, range_type = get_range(foreach_ins.children[4])
+            foreach_list.append([var_name] + loop_range + [range_type])
+
+
+        process_foreach(t, foreach_list)
+
     else:
         raise SyntaxError('Unknown instruction: %s' % t.data)
 
@@ -397,7 +427,7 @@ Action:
 """
 def run_parser(program):
     parse_tree = parser.parse(program)
-    #print (parse_tree.pretty(indent_str='  '))
+    # print (parse_tree.pretty(indent_str='  '))
     # exit()
 
     # code = LBRACE (instruction SEMICOLON)+ RBRACE
