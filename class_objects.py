@@ -34,14 +34,27 @@ class Attributes:
 
 class Node:
 	def __init__(self, position = (0,0), attributes = Attributes(), name="", identity = ""):
+		self.shapes = ['ellipse', 'diamond', 'trapezoid','trapezoid2','hexagon','octagon','star5', 'star6','star7', 'star8','triangle','triangle2', 'circle', 'rectangle', 'roundrectangle']
+		self.colors = {"white":"#FFFFFF", "silver":"#C0C0C0", "gray":"#808080", "black":"#000000","red":"#FF0000","yellow":"#FFFF00","green":"#008000","blue":"#0000FF", "purple":"#800080"}
 		self.position = position
 		self.attributes = attributes
 		self.name = name
 		self.id = identity
 		self.shape = "rectangle"
-		self.color = "white"
+		self.color = "#FFFFFF"
 		self.height = 100
 		self.width = 100
+		self.intensity = 255
+		if 'fill' in self.attributes.named_attributes.keys():
+			color = self.attributes.named_attributes['fill']
+			if color in self.colors.keys():
+				self.color = self.colors[color]
+		if 'intensity' in self.attributes.named_attributes.keys():
+			self.intensity = self.attributes.named_attributes['intensity']
+		for attribute in self.attributes.unnamed_attributes:
+			if attribute in self.shapes:
+				self.shape = attribute
+				break
 
 	def show(self):
 		print "Name: ", self.name

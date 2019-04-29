@@ -5,7 +5,7 @@ import tkFont
 import random
 from listings import *
 
-import parser_updated as parser
+
 import decoder
 
 ############# global variables ################
@@ -109,7 +109,7 @@ def convert():
 		input_filename = inputfile_entry.get()
 
 		program = preprocess_inputfile(input_filename)
-
+		import parser_updated as parser
 		parser.run_parser(program)
 
 		intermediate_output = parser.export()

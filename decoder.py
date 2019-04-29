@@ -12,7 +12,7 @@ def run(jsonfilename= "sample2.json", graphfilename="test.graphml"):
 	g = yedgraphml.Graph()
 
 	for node in nodes:
-		g.add_node(node['id'], label = node['name'], shape = node['shape'], shape_fill = node['color'], x=node['position'][0], y=node['position'][1])
+		g.add_node(node['id'], label = node['name'], shape = node['shape'], shape_fill = node['color'], x=node['position'][0]*100, y=node['position'][1]*100)
 
 	for edge in edges:
 		edge['edge_type'] = edge_map[edge['edge_type']]

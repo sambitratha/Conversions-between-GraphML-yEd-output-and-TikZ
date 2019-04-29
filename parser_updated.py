@@ -17,8 +17,7 @@ import math
 
 #how to write grammar for node_draw (conflict issues)
 
-calc_grammar = """
-    start: LBRACE (instruction SEMICOLON)+ RBRACE
+calc_grammar = """    start: (BACKSLASH TIKZ)? LBRACE (instruction SEMICOLON)+ RBRACE
 
     instruction: BACKSLASH NODE for_each* node_prop                     -> node_ins
                 |BACKSLASH DRAW node_draw (edge_details? node_draw)*    -> draw_ins
@@ -59,17 +58,25 @@ calc_grammar = """
 
     pos: AT position
 
-    position: LPARAN expr COMMA expr RPARAN             -> cartesian
-            | LPARAN expr COLON expr RPARAN             -> polar
+    position: LPARAN expr UNIT? COMMA expr UNIT? RPARAN             -> cartesian
+            | LPARAN expr UNIT? COLON expr UNIT? RPARAN             -> polar
 
     attrs: LBOX attr (COMMA attr)* RBOX
     
     attr: STR_CONST+                         -> unnamed_attr
         | STR_CONST+ EQUALS STR_CONST+       -> str_attr
         | STR_CONST+ EQUALS expr             -> num_attr
-        | STR_CONST+ EQUALS 
+        | FILL EQUALS STR_CONST EXCLAMATION expr -> fill
     
-    name: LBRACE STR_CONST RBRACE
+    name: LBRACE alphanum RBRACE
+
+    LCASE_LETTER: "a".."z"
+    UCASE_LETTER: "A".."Z"
+    DIGIT: "0".."9"
+
+    LETTER: UCASE_LETTER | LCASE_LETTER
+
+    alphanum: ("_"|LETTER|DIGIT)+
 
     expr:   expr PLUS expr                  -> add
             | expr SUB expr                 -> sub
@@ -106,6 +113,8 @@ calc_grammar = """
     DASH: SUB
     COLON: ":"
     SLASH: "/"
+    EXCLAMATION: "!"
+    UNIT: "cm" | "m"
    
     NODE: "node"
     DRAW: "draw"
@@ -113,6 +122,8 @@ calc_grammar = """
     AT: "at"
     IN: "in"
     FOREACH: "foreach"
+    FILL : "fill"
+    TIKZ:"tikz"
     %import common.ESCAPED_STRING   -> STRING
     %import common.CNAME -> NAME
     %import common.INT -> NUMBER
@@ -190,7 +201,12 @@ def process_loop(t, foreach_list, loopnumber, dictionary, ins = False):
 
         return nodes
 
-
+def process_alphanum(t):
+    output = ""
+    for children in t.children:
+        output+=(str)(children)
+    return output
+    
 def generate_node(t, dictionary = None, position = (0,0)):
     global count
     pos = position
@@ -205,7 +221,10 @@ def generate_node(t, dictionary = None, position = (0,0)):
         elif child.data == 'pos':
             #pos = (process_add_expr(child.children[2], dictionary), process_add_expr(child.children[4], dictionary))
             position = child.children[1]
-            expr1, expr2 = position.children[1], position.children[3]
+            expr1 = position.children[1]
+            for  i in range(3,min(6, len(position.children))):
+                if token.children[i].data == 'expr':
+                    expr2 = token.children[i]
 
             x, y = process_add_expr(expr1, dictionary), process_add_expr(expr2, dictionary)  
 
@@ -216,7 +235,7 @@ def generate_node(t, dictionary = None, position = (0,0)):
             pos = (x, y)
         
         elif child.data == 'name':
-            name = str(child.children[1])
+            name = str(process_alphanum(child.children[1]))
 
         elif child.data == 'attrs':
 
@@ -236,6 +255,11 @@ def generate_node(t, dictionary = None, position = (0,0)):
                     
                     elif token.data == 'str_attr':
                         val = str(' '.join(token.children[token.children.index('=') + 1:]))
+                    elif token.data == 'fill':
+                        attrs.addNamedAttribute('fill',str(token.children[2]))
+                        attrs.addNamedAttribute('intensity',process_add_expr(token.children[4], dictionary))
+                        continue
+
                     
                     if key == "node contents":
                         name = val
