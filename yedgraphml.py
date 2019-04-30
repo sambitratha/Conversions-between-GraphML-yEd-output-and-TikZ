@@ -90,7 +90,7 @@ class Node:
 
 class Edge:
     def __init__(self, node1, node2, label="", arrowhead="standard", arrowfoot="none",
-                 color="#000000", line_type="line", width="1.0"):
+                 color="#000000", line_type="line", width=1):
 
         if arrowhead not in arrow_types:
             raise RuntimeWarning("Arrowhead type %s not recognised" % arrowhead)
@@ -116,7 +116,7 @@ class Edge:
 
         ET.SubElement(pl, "y:Arrows", source=self.arrowfoot, target=self.arrowhead)
         ET.SubElement(pl, "y:LineStyle", color=self.color, type=self.line_type,
-                      width=self.width)
+                      width=str(self.width))
 
         if self.label:
             ET.SubElement(pl, "y:EdgeLabel").text = self.label

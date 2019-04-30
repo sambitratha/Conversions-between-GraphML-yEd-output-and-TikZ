@@ -75,7 +75,7 @@ class Edge:
 		self.edge_type = abs(edge_type)
 		self.attrs 		 = attrs
 		self.width = 1
-		self.color = "black"
+		self.color = "#000000"
 
 	def show(self):
 		if self.edge_type:
