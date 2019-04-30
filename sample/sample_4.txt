@@ -1,6 +1,6 @@
 \tikz { 
-	\node (node1) at (400,0) [color=red, circle] {BR};
-	\node (node2) at (400,400) [color=blue, circle] {TR};
-	\node (node3) at (0,400) [color=yellow, circle] {TL};
-	\node (node4) at (0,0) [color=green, circle] {BL};
+	\node (node1) at (4,0) [fill=red, circle] {BR};
+	\node (node2) at (4,4) [fill=blue, circle] {TR};
+	\node (node3) at (0,4) [fill=yellow, circle] {TL};
+	\node (node4) at (0,0) [fill=green, circle] {BL};
 	\draw (node1) edge (node2); }

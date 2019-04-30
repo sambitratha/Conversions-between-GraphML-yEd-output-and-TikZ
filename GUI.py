@@ -137,6 +137,7 @@ def preprocess_inputfile(filename):
 		code = f.read()
 
 	code = code.replace('\\', '$')
+	code = code.replace('--','edge')
 	code = code[code.find("$tikz") + 5 : ]
 
 	index = code.find("{") + 1

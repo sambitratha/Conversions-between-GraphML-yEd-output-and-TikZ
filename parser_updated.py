@@ -53,6 +53,29 @@ calc_grammar = """    start: (BACKSLASH TIKZ)? LBRACE (instruction SEMICOLON)+ R
     values: STR_CONST (SLASH STR_CONST)*
 
     node_prop: id? pos? attrs? name?
+            |  id? pos? name? attrs?
+            |  id? attrs? pos? name?
+            |  id? attrs? name? pos?
+            |  id? name? pos? attrs?
+            |  id? name? attrs? pos?
+            |  pos? id? attrs? name?
+            |  pos? id? name? attrs?
+            |  pos? attrs? id? name?
+            |  pos? attrs? name? id?
+            |  pos? name? id? attrs?
+            |  pos? name? attrs? id?
+            |  attrs? id? pos? name?
+            |  attrs? id? name? pos?
+            |  attrs? pos? id? name?
+            |  attrs? pos? name? id?
+            |  attrs? name? id? pos?
+            |  attrs? name? pos? id?
+            |  name? id? pos? attrs?
+            |  name? id? attrs? pos?
+            |  name? pos? id? attrs?
+            |  name? pos? attrs? id?
+            |  name? attrs? id? pos?
+            |  name? attrs? pos? id?
 
     id: LPARAN STR_CONST RPARAN                        
 
@@ -76,7 +99,7 @@ calc_grammar = """    start: (BACKSLASH TIKZ)? LBRACE (instruction SEMICOLON)+ R
 
     LETTER: UCASE_LETTER | LCASE_LETTER
 
-    alphanum: ("_"|LETTER|DIGIT)+
+    alphanum: ("_"|LETTER|DIGIT)*
 
     expr:   expr PLUS expr                  -> add
             | expr SUB expr                 -> sub
@@ -206,7 +229,7 @@ def process_alphanum(t):
     for children in t.children:
         output+=(str)(children)
     return output
-    
+
 def generate_node(t, dictionary = None, position = (0,0)):
     global count
     pos = position
@@ -214,57 +237,59 @@ def generate_node(t, dictionary = None, position = (0,0)):
     name = ""
     identity = ""
 
-    for child in t.children:
-        if child.data == "id":
-            identity = str(child.children[1])
+    if t is not None:
+        for child in t.children:
+            if child.data == "id":
+                identity = str(child.children[1])
 
-        elif child.data == 'pos':
-            #pos = (process_add_expr(child.children[2], dictionary), process_add_expr(child.children[4], dictionary))
-            position = child.children[1]
-            expr1 = position.children[1]
-            for  i in range(3,min(6, len(position.children))):
-                if token.children[i].data == 'expr':
-                    expr2 = token.children[i]
-
-            x, y = process_add_expr(expr1, dictionary), process_add_expr(expr2, dictionary)  
-
-            if position.data == "polar":
-                theta =  (x * math.pi) / 180.0
-                x, y = y * math.cos(theta), y * math.sin(theta)
-
-            pos = (x, y)
-        
-        elif child.data == 'name':
-            name = str(process_alphanum(child.children[1]))
-
-        elif child.data == 'attrs':
-
-            for i in range(1, len(child.children)-1,2):
-                token = child.children[i]
-                if token.data == "unnamed_attr":
-                    val = str(' '.join(token.children))
-                    attrs.addUnnamedAttribute(val)
-
+            elif child.data == 'pos':
+                #pos = (process_add_expr(child.children[2], dictionary), process_add_expr(child.children[4], dictionary))
+                position = child.children[1]
+                expr1 = position.children[1]
+                if position.children[3] == ",":
+                    expr2 = position.children[4]
                 else:
+                    expr2 = position.children[3]
 
-                    key = str(' '.join(token.children[0:token.children.index('=')]))
-                    
-                    if token.data == 'num_attr':
-                        val = token.children[token.children.index('=') + 1]
-                        val = process_add_expr(val, dictionary)
-                    
-                    elif token.data == 'str_attr':
-                        val = str(' '.join(token.children[token.children.index('=') + 1:]))
-                    elif token.data == 'fill':
-                        attrs.addNamedAttribute('fill',str(token.children[2]))
-                        attrs.addNamedAttribute('intensity',process_add_expr(token.children[4], dictionary))
-                        continue
+                x, y = process_add_expr(expr1, dictionary), process_add_expr(expr2, dictionary)  
 
-                    
-                    if key == "node contents":
-                        name = val
+                if position.data == "polar":
+                    theta =  (x * math.pi) / 180.0
+                    x, y = y * math.cos(theta), y * math.sin(theta)
+
+                pos = (x, y)
+            
+            elif child.data == 'name':
+                name = str(process_alphanum(child.children[1]))
+
+            elif child.data == 'attrs':
+
+                for i in range(1, len(child.children)-1,2):
+                    token = child.children[i]
+                    if token.data == "unnamed_attr":
+                        val = str(' '.join(token.children))
+                        attrs.addUnnamedAttribute(val)
+
                     else:
-                        attrs.addNamedAttribute(key, val)
+
+                        key = str(' '.join(token.children[0:token.children.index('=')]))
+                        
+                        if token.data == 'num_attr':
+                            val = token.children[token.children.index('=') + 1]
+                            val = process_add_expr(val, dictionary)
+                        
+                        elif token.data == 'str_attr':
+                            val = str(' '.join(token.children[token.children.index('=') + 1:]))
+                        elif token.data == 'fill':
+                            attrs.addNamedAttribute('fill',str(token.children[2]))
+                            attrs.addNamedAttribute('intensity',process_add_expr(token.children[4], dictionary))
+                            continue
+
+                        
+                        if key == "node contents":
+                            name = val
+                        else:
+                            attrs.addNamedAttribute(key, val)
     if identity == "":
         identity = "default"+str(count)
         count += 1
@@ -273,13 +298,11 @@ def generate_node(t, dictionary = None, position = (0,0)):
 
     if identity != "":
         node_dictionary[identity] = new_node
-
     return new_node
 
 
 def process_foreach(t, foreach_list):
     nodes = []
-    print foreach_list
 
     first_loop = foreach_list[0]
     loop_vars = first_loop[0]
@@ -403,7 +426,7 @@ def process_instruction(t, dictionary = None):
                 node_draw = t.children[i]
 
                 identity = ""
-                if node_draw.data == "newnode":
+                if node_draw.data == "newnode" or node_draw.data == "tempnode":
                     if node_draw.children[0].data in ["polar", "cartesian"]:
                         position = node_draw.children[0]
                         x = process_add_expr(position.children[1])
@@ -412,8 +435,10 @@ def process_instruction(t, dictionary = None):
                         if position.data == "polar":
                             theta =  (x * math.pi) / 180.0
                             x, y = y * math.cos(theta), y * math.sin(theta)
-
-                        graph_nodes.append(generate_node(node_draw.children[2], position = (x,y) ))
+                        if node_draw.data == "newnode":
+                            graph_nodes.append(generate_node(node_draw.children[2], position = (x,y) ))
+                        elif node_draw.data == "tempnode":
+                            graph_nodes.append(generate_node(None, position = (x,y) ))
                        
                     else:
                         graph_nodes.extend(generate_node(node_draw.children[1]))

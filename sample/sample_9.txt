@@ -1,6 +1,6 @@
 \tikz
 {
-	\node (a) at (1,0) {a};
+	\node (a) {a} at (1,0) ;
 	\node (b) at (0,0) {b};
 	\node (c) at (0,1) {c};
 	\node (d) at (1,1) {d};

@@ -14,7 +14,7 @@ arrow_types = ["none", "standard", "white_delta", "diamond", "white_diamond", "s
 node_shapes = ["rectangle", "rectangle3d", "roundrectangle", "diamond", "ellipse",
                "fatarrow", "fatarrow2", "hexagon", "octagon", "parallelogram",
                "parallelogram2", "star5", "star6", "star6", "star8", "trapezoid",
-               "trapezoid2", "triangle", "trapezoid2", "triangle"]
+               "trapezoid2", "triangle", "trapezoid2", "triangle", "circle"]
 
 shape_dict_xml_tex = {'ellipse': 'circle', 'diamond': 'diamond', 'trapezoid': 'trapezium',
                       'trapezoid2': 'trapezium, rotate=180',

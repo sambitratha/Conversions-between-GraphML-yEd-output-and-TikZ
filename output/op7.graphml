@@ -7,8 +7,8 @@
 		<node id="n1">
 			<data key="data_node">
 				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="9.0" y="0.0"/>
-					<y:Fill color="white" transparent="true"/>
+					<y:Geometry height="100" width="100" x="900.0" y="0.0"/>
+					<y:Fill color="#008000" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">n1</y:NodeLabel>
 					<y:Shape type="rectangle"/>
@@ -18,8 +18,8 @@
 		<node id="n2">
 			<data key="data_node">
 				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="9.0" y="9.0"/>
-					<y:Fill color="white" transparent="true"/>
+					<y:Geometry height="100" width="100" x="900.0" y="900.0"/>
+					<y:Fill color="#008000" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">n2</y:NodeLabel>
 					<y:Shape type="rectangle"/>

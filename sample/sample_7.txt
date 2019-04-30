@@ -1,1 +1,1 @@
-\tikz {\node (n1) at (9,0) [green] {n1};\node (n2) at (9,9) [green] {n2}; \draw (n1) edge (n2);}
+\tikz {\node (n1) at (9,0) [fill=green] {n1};\node (n2) at (9,9) [fill=green] {n2}; \draw (n1) edge (n2);}

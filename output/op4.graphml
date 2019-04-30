@@ -8,10 +8,10 @@
 			<data key="data_node">
 				<y:ShapeNode>
 					<y:Geometry height="100" width="100" x="400.0" y="0.0"/>
-					<y:Fill color="white" transparent="true"/>
+					<y:Fill color="#FF0000" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">BR</y:NodeLabel>
-					<y:Shape type="rectangle"/>
+					<y:Shape type="circle"/>
 				</y:ShapeNode>
 			</data>
 		</node>
@@ -19,10 +19,10 @@
 			<data key="data_node">
 				<y:ShapeNode>
 					<y:Geometry height="100" width="100" x="0.0" y="400.0"/>
-					<y:Fill color="white" transparent="true"/>
+					<y:Fill color="#FFFF00" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">TL</y:NodeLabel>
-					<y:Shape type="rectangle"/>
+					<y:Shape type="circle"/>
 				</y:ShapeNode>
 			</data>
 		</node>
@@ -30,10 +30,10 @@
 			<data key="data_node">
 				<y:ShapeNode>
 					<y:Geometry height="100" width="100" x="400.0" y="400.0"/>
-					<y:Fill color="white" transparent="true"/>
+					<y:Fill color="#0000FF" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">TR</y:NodeLabel>
-					<y:Shape type="rectangle"/>
+					<y:Shape type="circle"/>
 				</y:ShapeNode>
 			</data>
 		</node>
@@ -41,10 +41,10 @@
 			<data key="data_node">
 				<y:ShapeNode>
 					<y:Geometry height="100" width="100" x="0.0" y="0.0"/>
-					<y:Fill color="white" transparent="true"/>
+					<y:Fill color="#008000" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">BL</y:NodeLabel>
-					<y:Shape type="rectangle"/>
+					<y:Shape type="circle"/>
 				</y:ShapeNode>
 			</data>
 		</node>
