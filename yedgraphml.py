@@ -90,7 +90,7 @@ class Node:
 
 class Edge:
     def __init__(self, node1, node2, label="", arrowhead="standard", arrowfoot="none",
-                 color="#000000", line_type="line", width=1):
+                 color="#000000", line_type="line", width=1, sx = 0, sy = 0, tx=1, ty=1):
 
         if arrowhead not in arrow_types:
             raise RuntimeWarning("Arrowhead type %s not recognised" % arrowhead)
@@ -108,12 +108,20 @@ class Edge:
         self.line_type = line_type
         self.color = color
         self.width = width
+        # geometry
+        self.path = {
+            'sx': sx,
+            'sy': sy,
+            'tx': tx,
+            'ty': ty
+        }
 
     def convert(self):
         edge = ET.Element("edge", id=str(self.edge_id), source=str(self.node1), target=str(self.node2))
         data = ET.SubElement(edge, "data", key="data_edge")
         pl = ET.SubElement(data, "y:PolyLineEdge")
-
+        ET.SubElement(pl, "y:Path",  sx=str(self.path["sx"]),
+                      sy=str(self.path["sy"]), tx=str(self.path["tx"]), ty=str(self.path["ty"]))
         ET.SubElement(pl, "y:Arrows", source=self.arrowfoot, target=self.arrowhead)
         ET.SubElement(pl, "y:LineStyle", color=self.color, type=self.line_type,
                       width=str(self.width))
@@ -202,7 +210,7 @@ class Graph:
     # pass node names, not actual node objects
     def add_edge(self, node1, node2, label="", arrowhead="standard", arrowfoot="none",
                  color="#000000", line_type="line",
-                 width="1.0"):
+                 width="1.0", sx = 0, sy = 0, tx=1, ty=1):
 
         if node1 not in self.nodes.keys():
             self.nodes[node1] = Node(node1)
@@ -210,5 +218,5 @@ class Graph:
         if node2 not in self.nodes.keys():
             self.nodes[node2] = Node(node2)
 
-        edge = Edge(node1, node2, label, arrowhead, arrowfoot, color, line_type, width)
+        edge = Edge(node1, node2, label, arrowhead, arrowfoot, color, line_type, width, sx , sy, tx, ty)
         self.edges[edge.edge_id] = edge

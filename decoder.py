@@ -2,9 +2,7 @@ import yedgraphml
 import json
 
 
-
-
-def run(jsonfilename= "sample2.json", graphfilename="test.graphml"):
+def run(jsonfilename= "sample.json", graphfilename="test.graphml"):
 	with open(jsonfilename) as f:
 	    data = json.load(f)
 
@@ -21,9 +19,12 @@ def run(jsonfilename= "sample2.json", graphfilename="test.graphml"):
 	for edge in edges:
 		edge['edge_type'] = edge_map[edge['edge_type']]
 		g.add_edge(edge['source'], edge['destination'], arrowhead = edge['edge_type'], 
-			width = str(edge['width']), color= edge['color'])
+			width = str(edge['width']), color= edge['color'], sx = edge['sx'], sy=edge['sy']
+			, tx=edge['tx'], ty=edge['ty'])
 
 
 	g.write_graph(graphfilename)
 
 	return graphfilename
+
+# run("sample_7.json", "test2.graphml")
