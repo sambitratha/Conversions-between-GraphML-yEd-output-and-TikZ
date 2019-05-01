@@ -7,7 +7,7 @@
 		<node id="n1">
 			<data key="data_node">
 				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="900.0" y="0.0"/>
+					<y:Geometry height="30" width="30" x="900.0" y="0.0"/>
 					<y:Fill color="#008000" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">n1</y:NodeLabel>
@@ -18,7 +18,7 @@
 		<node id="n2">
 			<data key="data_node">
 				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="900.0" y="900.0"/>
+					<y:Geometry height="30" width="30" x="900.0" y="900.0"/>
 					<y:Fill color="#008000" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">n2</y:NodeLabel>
@@ -29,8 +29,9 @@
 		<edge id="n1_n2" source="n1" target="n2">
 			<data key="data_edge">
 				<y:PolyLineEdge>
+					<y:Path sx="9.0" sy="0.0" tx="9.0" ty="9.0"/>
 					<y:Arrows source="none" target="none"/>
-					<y:LineStyle color="#000000" type="line" width="1.0"/>
+					<y:LineStyle color="#000000" type="line" width="1"/>
 				</y:PolyLineEdge>
 			</data>
 		</edge>

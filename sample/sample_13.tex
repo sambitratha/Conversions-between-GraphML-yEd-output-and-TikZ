@@ -1,0 +1,21 @@
+\tikz {
+	\node (a)[fill=red!60] at (13,7.5) {};  
+	\node (b)[fill=red!60] at (12,6) {};
+	\node (c)[fill=red!60] at (14,6) {};
+	\node (d) at (12,7) {};
+	\node (e) at (14,7) {};
+
+	\foreach \from/\to in {a/b,b/c,c/a,a/d,b/d,c/e}
+	\draw (\from) -- (\to);
+
+
+
+	\node[fill=none] at (15.5,7) {sy};
+
+	\node (r) at (18,7.5) {};
+	\node (s) at (17,6) {};
+	\node (t) at (19,6) {};
+
+	\foreach \from/\to in {r/s,s/t,t/r}
+	\draw (\from) -- (\to);
+}

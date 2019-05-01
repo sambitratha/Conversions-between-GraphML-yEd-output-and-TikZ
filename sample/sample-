@@ -1,0 +1,36 @@
+\tikz {
+	\node[fill=none] at (6,11) {G};
+	
+	  \node (a)[fill=red!60] at (6,8) {};  	  
+	  \node (b)[fill=red!60] at (6,6) {};
+	  \node (c) at (4,7) {};
+ 	  \node (d) at (7,7) {};
+	  \node (e) at (8,7)[fill=blue!60] {};
+
+	\node(p) at (6.4,8.5) {};
+	\node(q) at (7.5,8) {};
+
+	\node(r) at (6,9.5) {};
+	\node(s) at (8,8.5) {};
+
+	\foreach \from/\to in {a/c,a/d,a/e,b/c,b/d,b/e,a/p,e/q,a/r,e/s,p/q,r/s}
+    \draw (\from) -- (\to);
+
+    
+	\node[fill=none] at (12,11) {G};
+    
+	 \node (a1)[fill=red!60] at (12,8) {};  	  
+	  \node (b1)[fill=red!60] at (12,6) {};
+	  \node (c1) at (10,7) {};
+ 	  \node (d1) at (13,7) {};
+	  \node (e1) at (14,7)[fill=blue!60] {};
+
+	\node(p1) at (12.4,8.5) {};
+	\node(q1) at (13.5,8) {};
+
+	\node(r1) at (12,9.5) {};
+	\node(s1) at (14,8.5) {};
+
+	\foreach \from/\to in {a1/c1,a1/d1,a1/b1,b1/c1,b1/d1,b1/e1,a1/p1,e1/q1,a1/r1,e1/s1,p1/q1,r1/s1}
+    \draw (\from) -- (\to);
+}

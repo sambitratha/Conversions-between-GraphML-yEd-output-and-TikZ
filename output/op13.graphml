@@ -1,0 +1,188 @@
+<?xml version="1.0" ?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:java="http://www.yworks.com/xml/yfiles-common/1.0/java" xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xmlns:yed="http://www.yworks.com/xml/yed/3" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
+	<!--Graphml file Converted from Tex Code-->
+	<key for="node" id="data_node" yfiles.type="nodegraphics"/>
+	<key for="edge" id="data_edge" yfiles.type="edgegraphics"/>
+	<graph edgedefault="directed" id="G">
+		<node id="a">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="1300.0" y="750.0"/>
+					<y:Fill color="#FF0000" transparent="False"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node id="c">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="1400.0" y="600.0"/>
+					<y:Fill color="#FF0000" transparent="False"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node id="b">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="1200.0" y="600.0"/>
+					<y:Fill color="#FF0000" transparent="False"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node id="e">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="1400.0" y="700.0"/>
+					<y:Fill color="#000000" transparent="False"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node id="d">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="1200.0" y="700.0"/>
+					<y:Fill color="#000000" transparent="False"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node id="s">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="1700.0" y="600.0"/>
+					<y:Fill color="#000000" transparent="False"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node id="r">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="1800.0" y="750.0"/>
+					<y:Fill color="#000000" transparent="False"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node id="default0">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="1550.0" y="700.0"/>
+					<y:Fill color="#FFFFFF" transparent="False"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">sy</y:NodeLabel>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node id="t">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="1900.0" y="600.0"/>
+					<y:Fill color="#000000" transparent="False"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<edge id="c_a" source="c" target="a">
+			<data key="data_edge">
+				<y:PolyLineEdge>
+					<y:Path sx="0" sy="0" tx="0" ty="0"/>
+					<y:Arrows source="none" target="none"/>
+					<y:LineStyle color="#000000" type="line" width="1"/>
+				</y:PolyLineEdge>
+			</data>
+		</edge>
+		<edge id="r_s" source="r" target="s">
+			<data key="data_edge">
+				<y:PolyLineEdge>
+					<y:Path sx="0" sy="0" tx="0" ty="0"/>
+					<y:Arrows source="none" target="none"/>
+					<y:LineStyle color="#000000" type="line" width="1"/>
+				</y:PolyLineEdge>
+			</data>
+		</edge>
+		<edge id="c_e" source="c" target="e">
+			<data key="data_edge">
+				<y:PolyLineEdge>
+					<y:Path sx="0" sy="0" tx="0" ty="0"/>
+					<y:Arrows source="none" target="none"/>
+					<y:LineStyle color="#000000" type="line" width="1"/>
+				</y:PolyLineEdge>
+			</data>
+		</edge>
+		<edge id="s_t" source="s" target="t">
+			<data key="data_edge">
+				<y:PolyLineEdge>
+					<y:Path sx="0" sy="0" tx="0" ty="0"/>
+					<y:Arrows source="none" target="none"/>
+					<y:LineStyle color="#000000" type="line" width="1"/>
+				</y:PolyLineEdge>
+			</data>
+		</edge>
+		<edge id="b_c" source="b" target="c">
+			<data key="data_edge">
+				<y:PolyLineEdge>
+					<y:Path sx="0" sy="0" tx="0" ty="0"/>
+					<y:Arrows source="none" target="none"/>
+					<y:LineStyle color="#000000" type="line" width="1"/>
+				</y:PolyLineEdge>
+			</data>
+		</edge>
+		<edge id="b_d" source="b" target="d">
+			<data key="data_edge">
+				<y:PolyLineEdge>
+					<y:Path sx="0" sy="0" tx="0" ty="0"/>
+					<y:Arrows source="none" target="none"/>
+					<y:LineStyle color="#000000" type="line" width="1"/>
+				</y:PolyLineEdge>
+			</data>
+		</edge>
+		<edge id="a_d" source="a" target="d">
+			<data key="data_edge">
+				<y:PolyLineEdge>
+					<y:Path sx="0" sy="0" tx="0" ty="0"/>
+					<y:Arrows source="none" target="none"/>
+					<y:LineStyle color="#000000" type="line" width="1"/>
+				</y:PolyLineEdge>
+			</data>
+		</edge>
+		<edge id="a_b" source="a" target="b">
+			<data key="data_edge">
+				<y:PolyLineEdge>
+					<y:Path sx="0" sy="0" tx="0" ty="0"/>
+					<y:Arrows source="none" target="none"/>
+					<y:LineStyle color="#000000" type="line" width="1"/>
+				</y:PolyLineEdge>
+			</data>
+		</edge>
+		<edge id="t_r" source="t" target="r">
+			<data key="data_edge">
+				<y:PolyLineEdge>
+					<y:Path sx="0" sy="0" tx="0" ty="0"/>
+					<y:Arrows source="none" target="none"/>
+					<y:LineStyle color="#000000" type="line" width="1"/>
+				</y:PolyLineEdge>
+			</data>
+		</edge>
+	</graph>
+</graphml>

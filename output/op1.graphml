@@ -7,7 +7,7 @@
 		<node id="default1">
 			<data key="data_node">
 				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="200.0" y="200.0"/>
+					<y:Geometry height="30" width="30" x="200.0" y="200.0"/>
 					<y:Fill color="#FFFFFF" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">a</y:NodeLabel>
@@ -18,7 +18,7 @@
 		<node id="default0">
 			<data key="data_node">
 				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="100.0" y="100.0"/>
+					<y:Geometry height="30" width="30" x="100.0" y="100.0"/>
 					<y:Fill color="#FFFFFF" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">a</y:NodeLabel>
@@ -29,7 +29,7 @@
 		<node id="default2">
 			<data key="data_node">
 				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="300.0" y="300.0"/>
+					<y:Geometry height="30" width="30" x="300.0" y="300.0"/>
 					<y:Fill color="#FFFFFF" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false">a</y:NodeLabel>

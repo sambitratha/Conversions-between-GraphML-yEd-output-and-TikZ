@@ -533,13 +533,18 @@ def process_instruction(t, dictionary = None):
 
         process_foreach(t, foreach_list)
     elif t.data == 'edge_ins':
-        positions = []
+        nodes = []
         for i in range(1,len(t.children),2):
             x, y = process_position(t.children[i], dictionary)
-            positions.append((x,y))
+            # print x,y
+            nodes.append(generate_node(None, position = (x,y)))
+            nodes[-1].makeTransparent()
+            # print nodes[-1].position, nodes[-1].id
 
-        # for i in range(1,len(positions)):
-        #     graph_edges.append(Edge(None,None,positions[i-1],positions[i],0))
+        graph_nodes.extend(nodes)
+
+        for i in range(1,len(nodes)):
+            graph_edges.append(Edge(nodes[i-1].id,nodes[i].id,nodes[i-1].position, nodes[i].position,0))
     else:
         raise SyntaxError('Unknown instruction: %s' % t.data)
 

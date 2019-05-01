@@ -1,0 +1,15 @@
+\tikz {
+\node (a) at (17,6) {};
+    \node (b) at (18,6) {};
+    \node (c) at (18,7) {};
+    \node (d) at (17,7) {};   
+    \foreach \from/\to in {a/b,b/c,c/d,d/a}
+    \draw (\from) -- (\to);         
+    
+	 \node (x) at (16,5) {};
+    \node (y) at (19,5) {};
+    \node (z) at (19,8) {};
+    \node (t) at (16,8) {};   
+    \foreach \from/\to in {x/y,y/z,z/t,t/x,a/x,b/y,c/z,d/t}
+    \draw (\from) -- (\to);    
+    }

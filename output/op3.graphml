@@ -4,43 +4,10 @@
 	<key for="node" id="data_node" yfiles.type="nodegraphics"/>
 	<key for="edge" id="data_edge" yfiles.type="edgegraphics"/>
 	<graph edgedefault="directed" id="G">
-		<node id="default33">
+		<node id="default4">
 			<data key="data_node">
 				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="-100.0" y="2000.0"/>
-					<y:Fill color="#008000" transparent="false"/>
-					<y:BorderStyle color="#000000" type="line" width="1.0"/>
-					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
-					<y:Shape type="circle"/>
-				</y:ShapeNode>
-			</data>
-		</node>
-		<node id="default32">
-			<data key="data_node">
-				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="700.0" y="1200.0"/>
-					<y:Fill color="#008000" transparent="false"/>
-					<y:BorderStyle color="#000000" type="line" width="1.0"/>
-					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
-					<y:Shape type="circle"/>
-				</y:ShapeNode>
-			</data>
-		</node>
-		<node id="default31">
-			<data key="data_node">
-				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="800.0" y="1100.0"/>
-					<y:Fill color="#008000" transparent="false"/>
-					<y:BorderStyle color="#000000" type="line" width="1.0"/>
-					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
-					<y:Shape type="circle"/>
-				</y:ShapeNode>
-			</data>
-		</node>
-		<node id="default35">
-			<data key="data_node">
-				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="300.0" y="1600.0"/>
+					<y:Geometry height="30" width="30" x="300.0" y="1600.0"/>
 					<y:Fill color="#0000FF" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
@@ -48,11 +15,44 @@
 				</y:ShapeNode>
 			</data>
 		</node>
-		<node id="default34">
+		<node id="default1">
 			<data key="data_node">
 				<y:ShapeNode>
-					<y:Geometry height="100" width="100" x="400.0" y="1500.0"/>
+					<y:Geometry height="30" width="30" x="700.0" y="1200.0"/>
+					<y:Fill color="#008000" transparent="false"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node id="default0">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="800.0" y="1100.0"/>
+					<y:Fill color="#008000" transparent="false"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node id="default3">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="400.0" y="1500.0"/>
 					<y:Fill color="#0000FF" transparent="false"/>
+					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
+					<y:Shape type="circle"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node id="default2">
+			<data key="data_node">
+				<y:ShapeNode>
+					<y:Geometry height="30" width="30" x="-100.0" y="2000.0"/>
+					<y:Fill color="#008000" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel fontFamily="Dialog" fontSize="12" fontStyle="plain" underlinedText="false"/>
 					<y:Shape type="circle"/>

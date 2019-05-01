@@ -1,3 +1,4 @@
+import parser_updated as parser
 import tkinter as tk
 from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename
@@ -109,7 +110,6 @@ def convert():
 		input_filename = inputfile_entry.get()
 
 		program = preprocess_inputfile(input_filename)
-		import parser_updated as parser
 		parser.run_parser(program)
 
 		intermediate_output = parser.export()
@@ -128,6 +128,7 @@ def convert():
 
 	except Exception as e:
 		print(e)
+		parser.reset()
 		alert_message.set("Errors Occurred!!")
 		alert_box.config(fg = "red")
 

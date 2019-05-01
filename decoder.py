@@ -12,9 +12,12 @@ def run(jsonfilename= "sample.json", graphfilename="test.graphml"):
 	g = yedgraphml.Graph()
 
 	for node in nodes:
+		textcolor = "#FFFFFF"
+		if node["color"] == "#FFFFFF":
+			textcolor = "#000000"
 		g.add_node(node['id'], label = node['name'], shape = node['shape'], 
 			shape_fill = node['color'], x=node['position'][0]*100, y=node['position'][1]*100,
-			width = node['width'], height = node['height'])
+			width = node['width'], height = node['height'],  transparent = str(node["transparency"]), textcolor = textcolor)
 
 	for edge in edges:
 		edge['edge_type'] = edge_map[edge['edge_type']]
