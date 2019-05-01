@@ -1,9 +1,5 @@
 \tikz
 {
-	\node (a) {a} at (1,0) ;
-	\node (b) at (0,0) {b};
-	\node (c) at (0,1) {c};
-	\node (d) at (1,1) {d};
 
-	\foreach \angle in {0, 90, 180, 270} \node at (\angle: 1);
+	\foreach \angle in {0, 90, 180, 270} \node at (\angle: 2);
 }

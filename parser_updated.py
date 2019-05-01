@@ -20,7 +20,8 @@ import math
 calc_grammar = """    start: (BACKSLASH TIKZ)? LBRACE (instruction SEMICOLON)+ RBRACE
 
     instruction: BACKSLASH NODE for_each* node_prop                     -> node_ins
-                |BACKSLASH DRAW node_draw (edge_details? node_draw)*    -> draw_ins
+                |BACKSLASH DRAW position edge_details position (edge_details position)*   -> edge_ins
+                |BACKSLASH DRAW node_draw (edge_details node_draw)*    -> draw_ins
                 |(BACKSLASH for_each)* instruction                         -> loop_ins
 
     node_draw:    position? NODE node_prop              -> newnode
@@ -77,7 +78,7 @@ calc_grammar = """    start: (BACKSLASH TIKZ)? LBRACE (instruction SEMICOLON)+ R
             |  name? attrs? id? pos?
             |  name? attrs? pos? id?
 
-    id: LPARAN STR_CONST RPARAN                        
+    id: LPARAN alphanum RPARAN                        
 
     pos: AT position
 
@@ -149,7 +150,7 @@ calc_grammar = """    start: (BACKSLASH TIKZ)? LBRACE (instruction SEMICOLON)+ R
     TIKZ:"tikz"
     %import common.ESCAPED_STRING   -> STRING
     %import common.CNAME -> NAME
-    %import common.INT -> NUMBER
+    %import common.NUMBER -> NUMBER
     %import common.WS
     %import common.NEWLINE
     %ignore WS
@@ -191,6 +192,7 @@ def process_add_expr(t, dictionary = None):
 
 
 def process_loop(t, foreach_list, loopnumber, dictionary, ins = False):
+    # print dictionary
     if loopnumber == len(foreach_list):
         if not ins:
             return [generate_node(t, dictionary)]
@@ -201,22 +203,30 @@ def process_loop(t, foreach_list, loopnumber, dictionary, ins = False):
     else:
         nodes = []
         looprange = []
+        for_each = foreach_list[loopnumber]
+        variables = for_each[0]
+        if for_each[-1]=='range':
+            start_range = for_each[1]
+            end_range = for_each[-2]
+            
+            if type(start_range) == str:
+                start_range = dictionary[start_range]
 
-        start_range = foreach_list[loopnumber][1]
-        end_range = foreach_list[loopnumber][-2]
-        
-        if type(start_range) == "str":
-            start_range = dictionary[start_range]
+            if type(end_range) == str:
+                end_range = dictionary[end_range]
 
-        if type(end_range) == "str":
-            end_range = dictionary[end_range]
-
-        looprange = range((int)(start_range), (int)(end_range) + 1)
-        # print start_range, end_range
+            # print start_range, end_range
+            looprange = range((int)(start_range), (int)(end_range) + 1)
+        else:
+            looprange = foreach_list[loopnumber][1:-1]
         # print looprange
 
         for i in range(len(looprange)):
-            dictionary[foreach_list[loopnumber][0]] = looprange[i]
+            if len(variables) == 1:
+                dictionary[variables[0]] = looprange[i]
+            else:
+                for j in range(len(variables)):
+                    dictionary[variables[j]] = loop_range[i][j]
             if not ins:
                 nodes.extend(process_loop(t, foreach_list, loopnumber + 1, dictionary))
             else:
@@ -236,26 +246,17 @@ def generate_node(t, dictionary = None, position = (0,0)):
     attrs = Attributes()
     name = ""
     identity = ""
-
+    # print "Gen"
     if t is not None:
         for child in t.children:
             if child.data == "id":
-                identity = str(child.children[1])
+                identity = str(process_alphanum(child.children[1]))
 
             elif child.data == 'pos':
                 #pos = (process_add_expr(child.children[2], dictionary), process_add_expr(child.children[4], dictionary))
                 position = child.children[1]
-                expr1 = position.children[1]
-                if position.children[3] == ",":
-                    expr2 = position.children[4]
-                else:
-                    expr2 = position.children[3]
-
-                x, y = process_add_expr(expr1, dictionary), process_add_expr(expr2, dictionary)  
-
-                if position.data == "polar":
-                    theta =  (x * math.pi) / 180.0
-                    x, y = y * math.cos(theta), y * math.sin(theta)
+                x,y = process_position(position,dictionary)
+                
 
                 pos = (x, y)
             
@@ -300,10 +301,23 @@ def generate_node(t, dictionary = None, position = (0,0)):
         node_dictionary[identity] = new_node
     return new_node
 
+def process_position(position, dictionary):
+    expr1 = position.children[1]
+    if position.children[3] == ",":
+        expr2 = position.children[4]
+    else:
+        expr2 = position.children[3]
+
+    x, y = process_add_expr(expr1, dictionary), process_add_expr(expr2, dictionary)  
+
+    if position.data == "polar":
+        theta =  (x * math.pi) / 180.0
+        x, y = y * math.cos(theta), y * math.sin(theta)
+    return x,y
 
 def process_foreach(t, foreach_list):
     nodes = []
-
+    print foreach_list
     first_loop = foreach_list[0]
     loop_vars = first_loop[0]
     if first_loop[-1] == 'range':
@@ -331,7 +345,7 @@ def process_foreach(t, foreach_list):
     return nodes
 
 
-def get_range(t):
+def get_range(t, multipe_variable_flag=False):
     if t.data == "rangetype1":
         values = []
         # range: numvar COMMA DOT DOT DOT COMMA numvar
@@ -340,7 +354,7 @@ def get_range(t):
         if start_range.data == "var":
 
             # numvar = variable
-            variable = start_range.children[0]
+            variable = start_range.children[0].children[0]
 
             # variable = BACKSLASH var_name
             values.append(str(variable.children[1]))
@@ -354,7 +368,7 @@ def get_range(t):
         if end_range.data == "var":
 
             # numvar = variable
-            variable = end_range.children[0]
+            variable = end_range.children[0].children[0]
 
             # variable = BACKSLASH var_name
             values.append(str(variable.children[1]))
@@ -371,10 +385,34 @@ def get_range(t):
 
         # discrete_range = num (COMMA num)*
         for i in range(0, len(t.children), 2):
-            if t.children[i].data == "number":
-                values.append(process_add_expr(t.children[i].children[0]))
-            elif t.children[i].data == "vals":
-                values.append(getValues(t.children[i].children[0]))
+            if not multipe_variable_flag:
+                if t.children[i].data == "number":
+                    values.append(process_add_expr(t.children[i].children[0]))
+                elif t.children[i].data == "vals":
+                    values.append(getValues(t.children[i].children[0]))
+            else:
+                if t.children[i].data == "vals":
+                    values.append(getValues(t.children[i].children[0]))
+                elif t.children[i].data == "number":
+
+                    number = t.children[i]
+
+                    # print number
+                    expr = number.children[0]
+                    div = expr.children[0]
+                    
+
+
+                    num1 = div.children[0]
+                    num2 = div.children[2]
+                    temp = []
+                    temp.append((float)(num1.children[0]))
+                    temp.append((float)(num2.children[0]))
+                    # for j in range(0,len(expr.children),2):
+                    #     temp.append((float)(process_add_expr(expr.children[j])))
+                    values.append(temp)
+
+
 
         return values, "discrete"
     else:
@@ -395,9 +433,9 @@ def process_node_instruction(t, dictionary = None):
         variables = foreach_ins.children[1]
         
         # variables : variable (SLASH variable)*
-        var_name = getVariables(variables)[0]
-
-        loop_range, range_type = get_range(foreach_ins.children[4])
+        var_name = getVariables(variables)
+        multipe_variable_flag = len(var_name)!=1
+        loop_range, range_type = get_range(foreach_ins.children[4], multipe_variable_flag)
         # foreach_list.append([var_name] + loop_range )
         foreach_list.append([var_name] + loop_range + [range_type])
 
@@ -424,17 +462,12 @@ def process_instruction(t, dictionary = None):
         for i in range(1, len(t.children)):
             if t.children[i].data != "edge_details":
                 node_draw = t.children[i]
-
                 identity = ""
                 if node_draw.data == "newnode" or node_draw.data == "tempnode":
                     if node_draw.children[0].data in ["polar", "cartesian"]:
                         position = node_draw.children[0]
-                        x = process_add_expr(position.children[1])
-                        y = process_add_expr(position.children[3])
-
-                        if position.data == "polar":
-                            theta =  (x * math.pi) / 180.0
-                            x, y = y * math.cos(theta), y * math.sin(theta)
+                        x,y = process_position(position,dictionary)
+                        
                         if node_draw.data == "newnode":
                             graph_nodes.append(generate_node(node_draw.children[2], position = (x,y) ))
                         elif node_draw.data == "tempnode":
@@ -443,7 +476,6 @@ def process_instruction(t, dictionary = None):
                     else:
                         graph_nodes.extend(generate_node(node_draw.children[1]))
                     identity = graph_nodes[-1].id
-                
                 elif node_draw.data == "lookup":
                     identity = node_draw.children[1]
 
@@ -453,7 +485,8 @@ def process_instruction(t, dictionary = None):
                 # t.children[i] = identity
                 node_ids.append(identity)
             else:
-                node_ids.append(None)
+                node_ids.append("0")
+
 
         for i in range(1, len(t.children)):
             # print type(t.children[i])
@@ -473,11 +506,16 @@ def process_instruction(t, dictionary = None):
                 source = node_ids[i-2]
                 destination = node_ids[i]
 
-                if edge_type ==-1:
-                    graph_edges.append(Edge(destination, source, edge_type))
-                else:
-                    graph_edges.append(Edge(source, destination, edge_type))  
+                source_pos = node_dictionary[source].position
+                destination_pos = node_dictionary[destination].position
 
+
+                if edge_type ==-1:
+                    graph_edges.append(Edge(destination, source, destination_pos, source_pos, edge_type))
+                else:
+                    graph_edges.append(Edge(source, destination,source_pos,destination_pos, edge_type))  
+
+        # print "done2"
     #t.children = (backslash foreach)*
     #foreach = foreach variables in { range }
     elif t.data == "loop_ins":
@@ -488,12 +526,20 @@ def process_instruction(t, dictionary = None):
 
             variable = foreach_ins.children[1]
             var_names = getVariables(variable)
-            loop_range, range_type = get_range(foreach_ins.children[4])
+            multipe_variable_flag = len(var_names)!=1
+            loop_range, range_type = get_range(foreach_ins.children[4],multipe_variable_flag)
             foreach_list.append([var_names] + loop_range + [range_type])
 
 
         process_foreach(t, foreach_list)
+    elif t.data == 'edge_ins':
+        positions = []
+        for i in range(1,len(t.children),2):
+            x, y = process_position(t.children[i], dictionary)
+            positions.append((x,y))
 
+        # for i in range(1,len(positions)):
+        #     graph_edges.append(Edge(None,None,positions[i-1],positions[i],0))
     else:
         raise SyntaxError('Unknown instruction: %s' % t.data)
 
@@ -540,10 +586,11 @@ def export():
     return output
 
 def reset():
-    global graph_edges, graph_nodes, node_dictionary
+    global graph_edges, graph_nodes, node_dictionary, count
     node_dictionary = {}
     graph_edges = []
     graph_nodes = []
+    count = 0
 
 
 def getVariables(t):

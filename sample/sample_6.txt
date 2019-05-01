@@ -1,1 +1,1 @@
-\tikz { \node foreach \y in {1,...,6} foreach \x in {1,...,\y} at (\x, \y) {a};}
+\tikz { \node foreach \y in {1,...,6} foreach \x in {1,...,6} at (\x, \y) {a};}

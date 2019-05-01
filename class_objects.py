@@ -42,8 +42,8 @@ class Node:
 		self.id = identity
 		self.shape = "rectangle"
 		self.color = "#FFFFFF"
-		self.height = 100
-		self.width = 100
+		self.height = 30
+		self.width = 30
 		self.intensity = 255
 		if 'fill' in self.attributes.named_attributes.keys():
 			color = self.attributes.named_attributes['fill']
@@ -69,13 +69,17 @@ class Node:
 
 
 class Edge:
-	def __init__(self, source, destination, edge_type, attrs = None):
+	def __init__(self, source, destination, edge_type, s_pos, d_pos,attrs = None,):
 		self.source = source
 		self.destination   = destination
 		self.edge_type = abs(edge_type)
 		self.attrs 		 = attrs
 		self.width = 1
 		self.color = "#000000"
+		self.sx = s_pos[0]
+		self.sy = s_pos[1]
+		self.dx = d_pos[0]
+		self.dy = d_pos[1]
 
 	def show(self):
 		if self.edge_type:

@@ -1,1 +1,13 @@
-\tikz { \node foreach \i in {1,...,5} at (9-\i,10+\i);}
+\tikz { \foreach \a in {0,...,10}
+\draw (\a*360/20: 4cm) node[fill=blue!35]{};
+
+\draw (10*360/20: 4cm) node[fill=blue!35]{1}(n1);
+\draw (9*360/20: 4cm) node[fill=blue!35]{2}(n2);
+\draw (1*360/20: 4cm) node[fill=blue!35]{3}(n3);
+\draw (0*360/20: 4cm) node[fill=blue!35]{4}(n4);
+
+\draw (7*360/20: 4cm) node[fill=black!15]{i};
+\draw (4*360/20: 4cm) node[fill=black!15]{j};
+
+\draw (n1) --(n3);
+}
