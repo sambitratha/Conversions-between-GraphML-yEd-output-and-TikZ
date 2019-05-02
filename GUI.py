@@ -114,7 +114,7 @@ def convert():
 
 		intermediate_output = parser.export()
 
-		json_output_file = input_filename[:input_filename.find('.')]+".json"
+		json_output_file =  input_filename[:input_filename.find('.')]+".json"
 
 		import json
 		with open (json_output_file,'w') as f:

@@ -195,7 +195,7 @@ def process_loop(t, foreach_list, loopnumber, dictionary, ins = False):
     # print dictionary
     if loopnumber == len(foreach_list):
         if not ins:
-            return [generate_node(t, dictionary)]
+            return [generate_node(t.children[-1], dictionary)]
         else:
             if t.children[0] == "$":
                 t.children.pop(0)
@@ -247,6 +247,7 @@ def generate_node(t, dictionary = None, position = (0,0)):
     name = ""
     identity = ""
     # print "Gen"
+    # print (t.pretty(indent_str='  '))
     if t is not None:
         for child in t.children:
             if child.data == "id":
@@ -531,7 +532,7 @@ def process_instruction(t, dictionary = None):
             foreach_list.append([var_names] + loop_range + [range_type])
 
 
-        process_foreach(t, foreach_list)
+        graph_nodes.extend(process_foreach(t, foreach_list))
     elif t.data == 'edge_ins':
         nodes = []
         for i in range(1,len(t.children),2):

@@ -1,0 +1,11 @@
+\tikz
+{
+	
+
+	  \node (a)[fill=red] at (10,8) {};  	  
+	  \node (b)[fill=red] at (10,6) {};
+	  \node (c)[fill=blue] at (8,7) {};
+ 	  \node (d) at (11,7) {};
+	  \node (e)[fill=green] at (12,7) {};
+
+}
