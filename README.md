@@ -14,12 +14,16 @@
    - This will run the GUI file, where user can select a tikz code in latex and save it as a graphml output.
 
 ## Functionalities covered
-   - [x] ` \node` instruction
-   - [x] ` \draw` instruction
+   - [x] ` \node` Instruction
+   - [x] ` \draw` Instruction
    - [x] ` \foreach \x/\y in {..}` 
-   - [x] drawing polar coordinates
-   - [x] drawing edges without declaring nodes
-   - [ ] handling math characters 
-   - [ ] handling `every node ./style` for a given codeblock
+   - [x] Drawing polar coordinates
+   - [x] Drawing edges without declaring nodes
+   - [ ] Handling math characters 
+   - [ ] Handling `every node ./style` for a given codeblock
 
+## References used
+   - [Tikz Documentation](http://pgf.sourceforge.net/pgf_CVS.pdf)
+   - [Graphml Yed Documentation](http://docs.yworks.com/yfiles/doc/developers-guide/graphml.html)
+   - [Lark-Parser on Github](https://github.com/lark-parser/lark)
 
