@@ -9,7 +9,7 @@
 	 - **Xml**
 	   -This library is used to generate the final graphml output
 
-   - **After installing the dependencies, clone or download the git repository in a folder and change the go to the downloaded folder in commandline.**
+   - **After installing the dependencies, clone or download the git repository in a folder and go to the downloaded folder in commandline.**
    - **From commandline, type** ` python GUI.py`
    - **This will run the GUI file, where user can select a tikz code in latex and save it as a graphml output.**
 
